@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Button, PermissionsAndroid, Text } from "react-native";
+import { StyleSheet, View, PermissionsAndroid } from "react-native";
 import Geolocation from 'react-native-geolocation-service';
+
+
 import DateAndCityName from "./DateAndCityName";
 import { getCurrentWeather } from '../requests/weatherRequests';
 import OneDayWeather from './OneDayWeather';
+import SunPath from './SunPath';
 
 export default class App extends Component {
 constructor(props) {
@@ -45,7 +48,6 @@ constructor(props) {
           
            },
            error => {
-             // See error code charts below.
              console.log(error.code, error.message);
            },
            {
@@ -65,6 +67,7 @@ constructor(props) {
 
  componentDidMount () {
     this.getLocation();
+    console.log(this.state.oneDayWeather)
   }
 
 
@@ -72,7 +75,8 @@ constructor(props) {
     return (
       <View style={styles.body}>
         <DateAndCityName cityName={this.state.cityName} />
-        <OneDayWeather id={this.state.weatherId}/>
+        <OneDayWeather id={this.state.weatherId} weatherInfo={this.state.oneDayWeather}/>
+        <SunPath weatherInfo={this.state.oneDayWeather} />
       </View>
     );
   }
@@ -81,6 +85,10 @@ constructor(props) {
 const styles = StyleSheet.create({
   body: {
     backgroundColor: '#FBC244',
-    flex: 1
+    
+    margin: 0,
+    flex: 1,
+    fontSize: 10,
+    color: '#3C3C3B'
   }
 })

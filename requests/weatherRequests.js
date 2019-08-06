@@ -14,6 +14,7 @@ let res
            }&units=${units}&APPID=${appId}`
          )
          .then(function(response) {
+           
            res = response.data
          })
          .catch(function(error) {
