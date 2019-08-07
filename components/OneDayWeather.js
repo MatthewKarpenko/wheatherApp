@@ -50,7 +50,7 @@ export default class OneDayWeather extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (this.props.weatherInfo != nextProps.weatherInfo) {
-      console.log(nextProps.id)
+     
       this.setIcon(nextProps.id);
       const temperatures = [];
       temperatures.unshift(Math.round(nextProps.weatherInfo.main.temp_min));

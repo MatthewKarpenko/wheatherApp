@@ -1,94 +1,65 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, PermissionsAndroid } from "react-native";
-import Geolocation from 'react-native-geolocation-service';
+import { 
+    createAppContainer, 
+    createStackNavigator, 
+    StackActions, 
+    NavigationActions } 
+    from 'react-navigation';
+
+import HomeScreen from './HomeScreen';
+import DetailsScreen from './DetailsScreen';
+
+// const transitionConfig = () => {
+//   return {
+//     transitionSpec: {
+//       duration: 750,
+//       easing: Easing.out(Easing.poly(4)),
+//       timing: Animated.timing,
+//       useNativeDriver: true
+//     },
+//     screenInterpolator: sceneProps => {
+//       const { layout, position, scene } = sceneProps;
+
+//       const thisSceneIndex = scene.index;
+//       const width = layout.initWidth;
+
+//       const translateY = position.interpolate({
+//         inputRange: [thisSceneIndex - 1, thisSceneIndex],
+//         outputRange: [width, 0]
+//       });
+//       return { transform: [{ translateY }] };
+//     }
+//   }
+//   }
+
+const AppNavigator = createStackNavigator(
+  {
+    Home: {
+      screen: HomeScreen,
+      navigationOptions: {
+        header: null
+      }
+    },
+    Details: {
+      screen: DetailsScreen,
+      navigationOptions: {
+        header: null
+      }
+    }
+  },
+  {
+    initialRouteName: "Home",
+    // transitionConfig,
+  }
+);
 
 
-import DateAndCityName from "./DateAndCityName";
-import { getCurrentWeather } from '../requests/weatherRequests';
-import OneDayWeather from './OneDayWeather';
-import SunPath from './SunPath';
+const AppContainer = createAppContainer(AppNavigator);
 
 export default class App extends Component {
-constructor(props) {
-  super(props);
-  this.state = {
-    oneDayWeather: null,
-    cityName: '',
-    weatherId: null
-  }
-}
-  
-  getLocation = async () => {
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        {
-          title: "Cool Location Permission",
-          message:
-            "Cool Location App needs access to your location " +
-            "so you can take awesome forecast.",
-          buttonNeutral: "Ask Me Later",
-          buttonNegative: "Cancel",
-          buttonPositive: "OK"
-        }
-      );
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-         Geolocation.getCurrentPosition(
-           position => {
-            //  this.setState({oneDayWeather: getCurrentWeather(position.coords)});
-          
-            getCurrentWeather(position.coords).then(res=>{
-            console.log(res)
-            this.setState({
-              oneDayWeather: res,
-              cityName: res.name,
-              weatherId: res.weather[0].id
-            });
-          })
-          
-           },
-           error => {
-             console.log(error.code, error.message);
-           },
-           {
-             enableHighAccuracy: true,
-             timeout: 15000,
-             maximumAge: 10000
-           }
-         );
-        console.log("You can use location");
-      } else {
-        console.log("location permission denied");
-      }
-    } catch (err) {
-      console.warn(err);
-    }
-  }
-
- componentDidMount () {
-    this.getLocation();
-    console.log(this.state.oneDayWeather)
-  }
-
-
   render() {
     return (
-      <View style={styles.body}>
-        <DateAndCityName cityName={this.state.cityName} />
-        <OneDayWeather id={this.state.weatherId} weatherInfo={this.state.oneDayWeather}/>
-        <SunPath weatherInfo={this.state.oneDayWeather} />
-      </View>
+      <AppContainer/>
     );
   }
-} 
-
-const styles = StyleSheet.create({
-  body: {
-    backgroundColor: '#FBC244',
-    
-    margin: 0,
-    flex: 1,
-    fontSize: 10,
-    color: '#3C3C3B'
-  }
-})
+}
