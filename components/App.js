@@ -1,13 +1,17 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { 
     createAppContainer, 
     createStackNavigator, 
     StackActions, 
     NavigationActions } 
     from 'react-navigation';
+import { Provider } from 'react-redux';
+import { createStore, applyMiddleware } from "redux";
+import thunk from "redux-thunk";
 
 import HomeScreen from './HomeScreen';
 import DetailsScreen from './DetailsScreen';
+import store from '../redux/store'
 
 // const transitionConfig = () => {
 //   return {
@@ -56,10 +60,12 @@ const AppNavigator = createStackNavigator(
 
 const AppContainer = createAppContainer(AppNavigator);
 
-export default class App extends Component {
+export default class App extends PureComponent {
   render() {
     return (
-      <AppContainer/>
+      <Provider store={store}>
+        <AppContainer />
+      </Provider>
     );
   }
 }

@@ -27,7 +27,6 @@ export default class DateAndCityName extends Component {
       "December"
     ];
     const fetchDate = new Date();
-    console.log(fetchDate.getDay());
     return `${day[fetchDate.getDay() - 1]}, ${fetchDate.getDate()} ${
       month[fetchDate.getMonth()]
     } ${fetchDate.getFullYear()}`;

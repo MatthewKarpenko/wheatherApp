@@ -1,14 +1,16 @@
-import React, { Component } from "react";
-import { StyleSheet, View, PermissionsAndroid } from "react-native";
+import React, { PureComponent } from "react";
+import { StyleSheet, View, PermissionsAndroid, Text } from "react-native";
 import Geolocation from "react-native-geolocation-service";
 import MaterialCommunityIcon from "react-native-vector-icons/MaterialCommunityIcons";
 
 import DateAndCityName from "./DateAndCityName";
-import { getCurrentWeather } from "../requests/weatherRequests";
+
 import OneDayWeather from "./OneDayWeather";
 import SunPath from "./SunPath";
+import { getOneDayWeather } from "../redux/store";
+import { connect } from "react-redux";
 
-export default class HomeScreen extends Component {
+class HomeScreen extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -19,7 +21,6 @@ export default class HomeScreen extends Component {
       fontColor: "#3C3C3B"
     };
   }
-  
 
   getLocation = async () => {
     try {
@@ -37,16 +38,16 @@ export default class HomeScreen extends Component {
       );
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
         Geolocation.getCurrentPosition(
-          position => {
-            //  this.setState({oneDayWeather: getCurrentWeather(position.coords)});
-
-            getCurrentWeather(position.coords).then(res => {
-              console.log(res);
-              this.setState({
-                oneDayWeather: res,
-                cityName: res.name,
-                weatherId: res.weather[0].id
-              });
+          async position => {
+           
+            await this.props.getOneDayWeather(position.coords);
+            
+            const { oneDayWeatherInfo } = this.props;
+            
+            this.setState({
+              oneDayWeather: oneDayWeatherInfo,
+              cityName: oneDayWeatherInfo.name,
+              weatherId: oneDayWeatherInfo.weather[0].id
             });
           },
           error => {
@@ -68,41 +69,53 @@ export default class HomeScreen extends Component {
   };
 
   componentDidMount() {
+    //this.getLocation();
     this.getLocation();
-    console.log(this.state.oneDayWeather);
+    // this.props.getOneDayWeather({ latitude: 50.4501, longitude: 30.5234 });
+    // console.log(this.props.oneDayWeatherInfo)
+    // console.log(this.props.loading);
   }
 
   render() {
     const dynamicStyles = {
       backgroundColor: this.state.defColor,
       color: this.state.fontColor
-    }
-     const combineStyles = StyleSheet.flatten([dynamicStyles, styles.body]);
+    };
+    const combineStyles = StyleSheet.flatten([dynamicStyles, styles.body]);
 
-    return (
-      <View style={combineStyles}>
-        <DateAndCityName cityName={this.state.cityName} />
+    const { oneDayWeatherInfo, loading } = this.props;
+    if (!loading) {
+      return (
+        <View style={combineStyles}>
+          <DateAndCityName cityName={this.state.cityName} />
 
-        <OneDayWeather
-          id={this.state.weatherId}
-          weatherInfo={this.state.oneDayWeather}
-        />
-
-        <SunPath weatherInfo={this.state.oneDayWeather} />
-        <View style={styles.showDetailsIcon}>
-          <MaterialCommunityIcon
-            name="chevron-double-down"
-            size={45}
-            color={"#3C3C3B"}
-            onPress={() =>
-              this.props.navigation.navigate("Details", {
-                defaultStyles: combineStyles
-              })
-            }
+          <OneDayWeather
+            id={this.state.weatherId}
+            weatherInfo={this.state.oneDayWeather}
           />
+
+          <SunPath weatherInfo={this.state.oneDayWeather} />
+          <View style={styles.showDetailsIcon}>
+            <MaterialCommunityIcon
+              name="chevron-double-down"
+              size={45}
+              color={"#3C3C3B"}
+              onPress={() =>
+                this.props.navigation.navigate("Details", {
+                  defaultStyles: combineStyles
+                })
+              }
+            />
+          </View>
         </View>
-      </View>
-    );
+      );
+    } else {
+      return (
+        <View>
+          <Text>loading...</Text>
+        </View>
+      );
+    }
   }
 }
 
@@ -110,9 +123,23 @@ const styles = StyleSheet.create({
   body: {
     margin: 0,
     flex: 1,
-    fontSize: 10,
+    fontSize: 10
   },
   showDetailsIcon: {
-    alignItems: "center",
+    alignItems: "center"
   }
 });
+
+const mapStateToProps = state => ({
+  oneDayWeatherInfo: state.oneDayWeather,
+  loading: state.loading
+});
+
+const mapDispatchToProps = {
+  getOneDayWeather
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(HomeScreen);

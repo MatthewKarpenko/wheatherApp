@@ -10,23 +10,23 @@ export default class SunPath extends Component {
     this.state = {
       cx: 24.901330947875977,
       cy: 55.82204818725586,
-      pathProp: 
+      pathProp:
         "M-1.5,90.5c31.28-54.36,88-85,152-85c96.65,0,149.78,81.13,152,85",
       sunriseTime: null,
       sunsetTime: null,
-      strokeDasharray: '',
-      strokeDashoffset: '',
-      strokeColor: '#3C3C3B',
-      fillColor: '#3C3C3B'
+      strokeDasharray: "",
+      strokeDashoffset: "",
+      strokeColor: "#3C3C3B",
+      fillColor: "#3C3C3B"
     };
 
     this.sunPath = React.createRef();
     this.sun = React.createRef();
   }
 
-  showCurrentSunPosition = (sunInfo) => {
+  showCurrentSunPosition = sunInfo => {
     let currentTimeUnix = moment().unix();
-    console.log('currentTimeUnix '+ currentTimeUnix)
+    console.log("currentTimeUnix " + currentTimeUnix);
     const { sunrise, sunset } = sunInfo;
     let percentOfDay = (currentTimeUnix - sunrise) / (sunset - sunrise);
     let percentOfNight;
@@ -37,43 +37,41 @@ export default class SunPath extends Component {
       percentOfNight =
         1 - (sunrise - currentTimeUnix) / (86400 - (sunset - sunrise));
     }
-    
+
     this.setState({
       sunriseTime: moment(new Date(sunrise * 1000)).format("H:mm"),
       sunsetTime: moment(new Date(sunset * 1000)).format("H:mm")
     });
-    console.log('day' + percentOfDay)
-    console.log('night' + percentOfNight)
-    if (currentTimeUnix >= sunrise && currentTimeUnix < sunset){
-        this.displaySunPath(percentOfDay, 'day');
+    console.log("day" + percentOfDay);
+    console.log("night" + percentOfNight);
+    if (currentTimeUnix >= sunrise && currentTimeUnix < sunset) {
+      this.displaySunPath(percentOfDay, "day");
     } else {
-        this.displaySunPath(percentOfNight, 'night');
+      this.displaySunPath(percentOfNight, "night");
     }
   };
 
   displaySunPath = (percent, time) => {
-   //let sunPath = document.getElementById('sun-path');
-    let mainPath = path
-      .svgPathProperties(this.state.pathProp);
+    //let sunPath = document.getElementById('sun-path');
+    let mainPath = path.svgPathProperties(this.state.pathProp);
     let sunPathTotal = mainPath.getTotalLength();
 
     let sunPathCurrent = sunPathTotal * (1 - percent);
-    console.log(sunPathTotal );
+    console.log(sunPathTotal);
     console.log(sunPathCurrent);
     // get position of length
-    let sunPosition = mainPath.
-      getPointAtLength(sunPathTotal - sunPathCurrent);
-      
-    console.log()
+    let sunPosition = mainPath.getPointAtLength(sunPathTotal - sunPathCurrent);
+
+    console.log();
     this.setState({
       strokeDasharray: sunPathTotal,
       strokeDashoffset: sunPathCurrent,
       cx: sunPosition.x,
       cy: sunPosition.y
     });
-    
+
     // if (time === 'night') {
-    //     this.setState({ 
+    //     this.setState({
     //       strokeColor: '#C5C3C6',
     //       fillColor: '#C5C3C6'
     //    });
@@ -82,19 +80,7 @@ export default class SunPath extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (this.props.weatherInfo != nextProps.weatherInfo) {
-      //  this.displayPath();
-      // var properties = path.svgPathProperties(
-      //   "M-1.5,90.5c31.28-54.36,88-85,152-85c96.65,0,149.78,81.13,152,85"
-      // );
-      // var length = properties.getTotalLength();
-      //   console.log(
-      //     "M-1.5,90.5c31.28-54.36,88-85,152-85c96.65,0,149.78,81.13,152,85".getPointAtLength(
-      //       363.80535888671875 - 146.67774162892
-      //     )
-      //   );
-      
-      this.showCurrentSunPosition(nextProps.weatherInfo.sys)
-      
+      this.showCurrentSunPosition(nextProps.weatherInfo.sys);
     }
   }
 
