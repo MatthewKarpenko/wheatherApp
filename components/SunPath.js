@@ -26,7 +26,7 @@ export default class SunPath extends Component {
 
   showCurrentSunPosition = sunInfo => {
     let currentTimeUnix = moment().unix();
-    console.log("currentTimeUnix " + currentTimeUnix);
+ 
     const { sunrise, sunset } = sunInfo;
     let percentOfDay = (currentTimeUnix - sunrise) / (sunset - sunrise);
     let percentOfNight;
@@ -42,8 +42,7 @@ export default class SunPath extends Component {
       sunriseTime: moment(new Date(sunrise * 1000)).format("H:mm"),
       sunsetTime: moment(new Date(sunset * 1000)).format("H:mm")
     });
-    console.log("day" + percentOfDay);
-    console.log("night" + percentOfNight);
+   
     if (currentTimeUnix >= sunrise && currentTimeUnix < sunset) {
       this.displaySunPath(percentOfDay, "day");
     } else {
@@ -57,12 +56,11 @@ export default class SunPath extends Component {
     let sunPathTotal = mainPath.getTotalLength();
 
     let sunPathCurrent = sunPathTotal * (1 - percent);
-    console.log(sunPathTotal);
-    console.log(sunPathCurrent);
+    
     // get position of length
     let sunPosition = mainPath.getPointAtLength(sunPathTotal - sunPathCurrent);
 
-    console.log();
+   
     this.setState({
       strokeDasharray: sunPathTotal,
       strokeDashoffset: sunPathCurrent,

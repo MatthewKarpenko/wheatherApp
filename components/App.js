@@ -1,42 +1,13 @@
-import React, { PureComponent } from 'react';
-import { 
-    createAppContainer, 
-    createStackNavigator, 
-    StackActions, 
-    NavigationActions } 
-    from 'react-navigation';
-import { Provider } from 'react-redux';
-import { createStore, applyMiddleware } from "redux";
-import thunk from "redux-thunk";
+import React, { PureComponent } from "react";
+import { createAppContainer, createStackNavigator } from "react-navigation";
+import { Provider } from "react-redux";
+import { FluidNavigator } from "react-navigation-fluid-transitions";
 
-import HomeScreen from './HomeScreen';
-import DetailsScreen from './DetailsScreen';
-import store from '../redux/store'
+import HomeScreen from "./HomeScreen";
+import DetailsScreen from "./DetailsScreen";
+import store from "../redux/store";
 
-// const transitionConfig = () => {
-//   return {
-//     transitionSpec: {
-//       duration: 750,
-//       easing: Easing.out(Easing.poly(4)),
-//       timing: Animated.timing,
-//       useNativeDriver: true
-//     },
-//     screenInterpolator: sceneProps => {
-//       const { layout, position, scene } = sceneProps;
-
-//       const thisSceneIndex = scene.index;
-//       const width = layout.initWidth;
-
-//       const translateY = position.interpolate({
-//         inputRange: [thisSceneIndex - 1, thisSceneIndex],
-//         outputRange: [width, 0]
-//       });
-//       return { transform: [{ translateY }] };
-//     }
-//   }
-//   }
-
-const AppNavigator = createStackNavigator(
+const AppNavigator = FluidNavigator(
   {
     Home: {
       screen: HomeScreen,
@@ -52,11 +23,10 @@ const AppNavigator = createStackNavigator(
     }
   },
   {
-    initialRouteName: "Home",
+    initialRouteName: "Home"
     // transitionConfig,
   }
 );
-
 
 const AppContainer = createAppContainer(AppNavigator);
 

@@ -2,6 +2,8 @@ import React, { PureComponent } from "react";
 import { StyleSheet, View, PermissionsAndroid, Text } from "react-native";
 import Geolocation from "react-native-geolocation-service";
 import MaterialCommunityIcon from "react-native-vector-icons/MaterialCommunityIcons";
+import { Transition } from "react-navigation-fluid-transitions";
+
 
 import DateAndCityName from "./DateAndCityName";
 
@@ -43,7 +45,7 @@ class HomeScreen extends PureComponent {
             await this.props.getOneDayWeather(position.coords);
             
             const { oneDayWeatherInfo } = this.props;
-            
+            console.log( oneDayWeatherInfo )
             this.setState({
               oneDayWeather: oneDayWeatherInfo,
               cityName: oneDayWeatherInfo.name,
@@ -71,6 +73,7 @@ class HomeScreen extends PureComponent {
   componentDidMount() {
     //this.getLocation();
     this.getLocation();
+
     // this.props.getOneDayWeather({ latitude: 50.4501, longitude: 30.5234 });
     // console.log(this.props.oneDayWeatherInfo)
     // console.log(this.props.loading);
@@ -86,28 +89,30 @@ class HomeScreen extends PureComponent {
     const { oneDayWeatherInfo, loading } = this.props;
     if (!loading) {
       return (
-        <View style={combineStyles}>
-          <DateAndCityName cityName={this.state.cityName} />
+        
+          <View style={combineStyles}>
+            <DateAndCityName cityName={this.state.cityName} />
 
-          <OneDayWeather
-            id={this.state.weatherId}
-            weatherInfo={this.state.oneDayWeather}
-          />
-
-          <SunPath weatherInfo={this.state.oneDayWeather} />
-          <View style={styles.showDetailsIcon}>
-            <MaterialCommunityIcon
-              name="chevron-double-down"
-              size={45}
-              color={"#3C3C3B"}
-              onPress={() =>
-                this.props.navigation.navigate("Details", {
-                  defaultStyles: combineStyles
-                })
-              }
+            <OneDayWeather
+              id={this.state.weatherId}
+              weatherInfo={this.state.oneDayWeather}
             />
+
+            <SunPath weatherInfo={this.state.oneDayWeather} />
+            <View style={styles.showDetailsIcon}>
+              <MaterialCommunityIcon
+                name="chevron-double-down"
+                size={45}
+                color={"#3C3C3B"}
+                onPress={() =>
+                  this.props.navigation.navigate("Details", {
+                    defaultStyles: combineStyles
+                  })
+                }
+              />
+            </View>
           </View>
-        </View>
+        
       );
     } else {
       return (
