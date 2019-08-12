@@ -3,6 +3,8 @@ import { StyleSheet, View, PermissionsAndroid } from "react-native";
 import MaterialCommunityIcon from "react-native-vector-icons/MaterialCommunityIcons";
 import GestureRecognizer from 'react-native-swipe-gestures';
 
+import CurrentDayDetails from './CurrentDayDetails';
+
 export default class DetailsScreen extends Component {
     render() {
         const { navigation } = this.props;
@@ -36,6 +38,7 @@ export default class DetailsScreen extends Component {
                   this.props.navigation.goBack()
                 }
               />
+              <CurrentDayDetails />
             </View>
        </GestureRecognizer>
           
