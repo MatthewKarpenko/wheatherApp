@@ -16,9 +16,9 @@
     "react-native-reanimated": "^1.1.0",
     "react-native-responsive-dimensions": "^2.0.1",
     "react-native-svg": "^9.5.3",
+    "react-native-swipe-gestures": "^1.0.3",
     "react-native-vector-icons": "^6.6.0",
     "react-navigation": "^3.11.1",
-    "react-navigation-fluid-transitions": "^0.3.2",
     "react-redux": "^7.1.0",
     "redux": "^4.0.4",
     "redux-thunk": "^2.3.0",
@@ -33,6 +33,9 @@
     "react-test-renderer": "16.8.3"
   },
   "jest": {
-    "preset": "react-native"
+    "preset": "react-native",
+    "setupFiles": [
+      "./node_modules/react-native-gesture-handler/jestSetup.js"
+    ]
   }
 }

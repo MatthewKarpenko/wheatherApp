@@ -2,11 +2,9 @@ import React, { PureComponent } from "react";
 import { StyleSheet, View, PermissionsAndroid, Text } from "react-native";
 import Geolocation from "react-native-geolocation-service";
 import MaterialCommunityIcon from "react-native-vector-icons/MaterialCommunityIcons";
-import { Transition } from "react-navigation-fluid-transitions";
-
+import GestureRecognizer from 'react-native-swipe-gestures';
 
 import DateAndCityName from "./DateAndCityName";
-
 import OneDayWeather from "./OneDayWeather";
 import SunPath from "./SunPath";
 import { getOneDayWeather } from "../redux/store";
@@ -22,6 +20,7 @@ class HomeScreen extends PureComponent {
       defColor: "#FBC244",
       fontColor: "#3C3C3B"
     };
+   
   }
 
   getLocation = async () => {
@@ -85,12 +84,22 @@ class HomeScreen extends PureComponent {
       color: this.state.fontColor
     };
     const combineStyles = StyleSheet.flatten([dynamicStyles, styles.body]);
+    const { loading } = this.props;
+    const config = {
+      velocityThreshold: 0.1,
+      directionalOffsetThreshold: 80
+    };
 
-    const { oneDayWeatherInfo, loading } = this.props;
     if (!loading) {
       return (
-        
-          <View style={combineStyles}>
+        <GestureRecognizer
+        onSwipeUp={()=> this.props.navigation.navigate("Details", {
+          defaultStyles: combineStyles,
+          config,
+        })}
+        config={config}
+        style={combineStyles}
+        >
             <DateAndCityName cityName={this.state.cityName} />
 
             <OneDayWeather
@@ -111,8 +120,8 @@ class HomeScreen extends PureComponent {
                 }
               />
             </View>
-          </View>
-        
+         
+          </GestureRecognizer>
       );
     } else {
       return (

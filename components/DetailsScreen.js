@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, PermissionsAndroid } from "react-native";
 import MaterialCommunityIcon from "react-native-vector-icons/MaterialCommunityIcons";
-import { Transition } from "react-navigation-fluid-transitions";
-
-
+import GestureRecognizer from 'react-native-swipe-gestures';
 
 export default class DetailsScreen extends Component {
     render() {
@@ -15,10 +13,20 @@ export default class DetailsScreen extends Component {
             flex: 1,  
             fontSize: 10,
         });
+        const config = navigation.getParam('config', {
+        
+            velocityThreshold: 0.3,
+            directionalOffsetThreshold: 80
+          
+        })
 
         return (
-          <Transition appear='bottom'>
-          <View style={defStyles}>
+          <GestureRecognizer
+          onSwipeDown={()=>this.props.navigation.goBack()}
+          config={config}
+          style={defStyles}
+          >
+       
             <View style={styles.showDetailsIcon}>
               <MaterialCommunityIcon
                 name="chevron-double-up"
@@ -29,8 +37,8 @@ export default class DetailsScreen extends Component {
                 }
               />
             </View>
-          </View>
-          </Transition>
+       </GestureRecognizer>
+          
         );
     }
 }
