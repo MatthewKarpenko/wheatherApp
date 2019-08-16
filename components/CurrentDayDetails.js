@@ -21,7 +21,7 @@ import { connect } from "react-redux";
 }
 
 const mapStateToProps = state => ({
-    oneDayWeatherInfo: state.oneDayWeather
+    oneDayWeatherInfo: state.oneDayWeatherReducer.oneDayWeather
   });
   
 export default connect(

@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import { StyleSheet, Text, View } from "react-native";
+import { connect } from "react-redux";
 
-export default class DateAndCityName extends Component {
+class DateAndCityName extends Component {
   setDate() {
     const day = [
       "Monday",
@@ -37,7 +38,7 @@ export default class DateAndCityName extends Component {
       <View>
         <View style={styles.mainHeader}>
           <Text style={styles.date}>{this.setDate()}</Text>
-          <Text style={styles.cityName}>{this.props.cityName}</Text>
+          <Text style={styles.cityName}>{this.props.city}</Text>
         </View>
       </View>
     );
@@ -60,3 +61,16 @@ const styles = StyleSheet.create({
     marginTop: 20
   }
 });
+
+const mapStateToProps = state => {
+  const {oneDayWeather} = state.oneDayWeatherReducer
+  return {
+  city: oneDayWeather.name,
+  }
+};
+
+
+export default connect(
+  mapStateToProps,
+  {}
+)(DateAndCityName);

@@ -1,11 +1,9 @@
 import React, { Component } from "react";
 import { StyleSheet, View, Text } from "react-native";
 import MaterialCommunityIcon from "react-native-vector-icons/MaterialCommunityIcons";
+import { connect } from "react-redux";
 
-
-//import vector icons
-
-export default class OneDayWeather extends Component {
+class OneDayWeather extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -15,7 +13,7 @@ export default class OneDayWeather extends Component {
       weatherType: ""
     };
   }
-  // set icon for each weather condition
+
   setIcon = id => {
     if (id < 300) {
       this.setState({
@@ -48,19 +46,18 @@ export default class OneDayWeather extends Component {
     }
   };
 
-  componentWillReceiveProps(nextProps) {
-    if (this.props.weatherInfo != nextProps.weatherInfo) {
-     
-      this.setIcon(nextProps.id);
-      const temperatures = [];
-      temperatures.unshift(Math.round(nextProps.weatherInfo.main.temp_min));
-      temperatures.unshift(Math.round(nextProps.weatherInfo.main.temp_max));
-      this.setState({
-        todayTemp: Math.round(nextProps.weatherInfo.main.temp),
-        maxMinTemp: temperatures,
-        weatherType: nextProps.weatherInfo.weather[0].main.toLowerCase()
-      });
-    }
+  componentDidMount() {
+    const { oneDayWeatherInfo, weatherId } = this.props;
+
+    this.setIcon(weatherId);
+    const temperatures = [];
+    temperatures.unshift(Math.round(oneDayWeatherInfo.main.temp_min));
+    temperatures.unshift(Math.round(oneDayWeatherInfo.main.temp_max));
+    this.setState({
+      todayTemp: Math.round(oneDayWeatherInfo.main.temp),
+      maxMinTemp: temperatures,
+      weatherType: oneDayWeatherInfo.weather[0].main.toLowerCase()
+    });
   }
 
   render() {
@@ -109,3 +106,16 @@ const styles = StyleSheet.create({
     fontWeight: "200"
   }
 });
+
+const mapStateToProps = state => {
+  const { oneDayWeather } = state.oneDayWeatherReducer;
+  return {
+    oneDayWeatherInfo: oneDayWeather,
+    weatherId: oneDayWeather.weather[0].id
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  {}
+)(OneDayWeather);

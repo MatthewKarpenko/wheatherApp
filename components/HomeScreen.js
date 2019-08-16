@@ -2,25 +2,21 @@ import React, { PureComponent } from "react";
 import { StyleSheet, View, PermissionsAndroid, Text } from "react-native";
 import Geolocation from "react-native-geolocation-service";
 import MaterialCommunityIcon from "react-native-vector-icons/MaterialCommunityIcons";
-import GestureRecognizer from 'react-native-swipe-gestures';
+import GestureRecognizer from "react-native-swipe-gestures";
 
 import DateAndCityName from "./DateAndCityName";
 import OneDayWeather from "./OneDayWeather";
 import SunPath from "./SunPath";
-import { getOneDayWeather } from "../redux/store";
+import { getOneDayWeather, getFiveDayWeather } from "../redux/store";
 import { connect } from "react-redux";
 
 class HomeScreen extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      oneDayWeather: null,
-      cityName: "",
-      weatherId: null,
       defColor: "#FBC244",
       fontColor: "#3C3C3B"
     };
-   
   }
 
   getLocation = async () => {
@@ -40,16 +36,8 @@ class HomeScreen extends PureComponent {
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
         Geolocation.getCurrentPosition(
           async position => {
-           
             await this.props.getOneDayWeather(position.coords);
-            
-            const { oneDayWeatherInfo } = this.props;
-            console.log( oneDayWeatherInfo )
-            this.setState({
-              oneDayWeather: oneDayWeatherInfo,
-              cityName: oneDayWeatherInfo.name,
-              weatherId: oneDayWeatherInfo.weather[0].id
-            });
+            await this.props.getFiveDayWeather(position.coords);
           },
           error => {
             console.log(error.code, error.message);
@@ -70,12 +58,7 @@ class HomeScreen extends PureComponent {
   };
 
   componentDidMount() {
-    //this.getLocation();
     this.getLocation();
-
-    // this.props.getOneDayWeather({ latitude: 50.4501, longitude: 30.5234 });
-    // console.log(this.props.oneDayWeatherInfo)
-    // console.log(this.props.loading);
   }
 
   render() {
@@ -93,35 +76,32 @@ class HomeScreen extends PureComponent {
     if (!loading) {
       return (
         <GestureRecognizer
-        onSwipeUp={()=> this.props.navigation.navigate("Details", {
-          defaultStyles: combineStyles,
-          config,
-        })}
-        config={config}
-        style={combineStyles}
+          onSwipeUp={() =>
+            this.props.navigation.navigate("Details", {
+              defaultStyles: combineStyles,
+              config
+            })
+          }
+          config={config}
+          style={combineStyles}
         >
-            <DateAndCityName cityName={this.state.cityName} />
+          <DateAndCityName />
+          <OneDayWeather />
+          <SunPath />
 
-            <OneDayWeather
-              id={this.state.weatherId}
-              weatherInfo={this.state.oneDayWeather}
+          <View style={styles.showDetailsIcon}>
+            <MaterialCommunityIcon
+              name="chevron-double-down"
+              size={45}
+              color={"#3C3C3B"}
+              onPress={() =>
+                this.props.navigation.navigate("Details", {
+                  defaultStyles: combineStyles
+                })
+              }
             />
-
-            <SunPath weatherInfo={this.state.oneDayWeather} />
-            <View style={styles.showDetailsIcon}>
-              <MaterialCommunityIcon
-                name="chevron-double-down"
-                size={45}
-                color={"#3C3C3B"}
-                onPress={() =>
-                  this.props.navigation.navigate("Details", {
-                    defaultStyles: combineStyles
-                  })
-                }
-              />
-            </View>
-         
-          </GestureRecognizer>
+          </View>
+        </GestureRecognizer>
       );
     } else {
       return (
@@ -144,13 +124,17 @@ const styles = StyleSheet.create({
   }
 });
 
-const mapStateToProps = state => ({
-  oneDayWeatherInfo: state.oneDayWeather,
-  loading: state.loading
-});
+const mapStateToProps = state => {
+  const { oneDayWeather, loading } = state.oneDayWeatherReducer;
+  return {
+    oneDayWeatherInfo: oneDayWeather,
+    loading
+  };
+};
 
 const mapDispatchToProps = {
-  getOneDayWeather
+  getOneDayWeather,
+  getFiveDayWeather
 };
 
 export default connect(

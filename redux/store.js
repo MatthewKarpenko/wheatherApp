@@ -1,63 +1,77 @@
 import { createStore, applyMiddleware } from "redux";
-//import thunk for doing asynchronous operations in redux
 import thunk from "redux-thunk";
-//import reducer from our reducer file
+import logger from 'redux-logger';
 import reducers from "./reducers/weatherInfo";
-//import action creators used by dispatchers to alter your global state.
-import { fetchData, fetchDataFulfilled, fetchDataRejected } from "./reducers/weatherInfo"
-import axios from "axios";
 
+import {
+  fetchData,
+  fetchDataFulfilled,
+  fetchDataRejected
+} from "./actions/weatherActions";
+import axios from "axios";
 
 const appId = "80ac52657b8f0fd478c3980320b78a32";
 const units = "metric";
 
-const getFiveDayWeather = (coords) => {
+export const getFiveDayWeather = coords => {
   return async dispatch => {
-    //Dispatch the fetchData action creator before retrieving to set our loading state to true.
-    dispatch(fetchData(true));
-    //Then get the data.
-     await axios
-      .get(`https://api.openweathermap.org/data/2.5/weather?lat=${
-             coords.latitude
-           }&lon=${
-             coords.longitude  
-           }&units=${units}&APPID=${appId}`)
+    dispatch(fetchData(true, "GET_WEATHER_FIVE_DAYS"));
+    await axios
+      .get(
+        `https://api.openweathermap.org/data/2.5/forecast?lat=${
+          coords.latitude
+        }&lon=${coords.longitude}&units=${units}&APPID=${appId}`
+      )
       .then(res => {
-        //Set the results to the people array.
-        dispatch(fetchDataFulfilled(res.data));
-        //Error handle the promise and set your errorMessage
+        dispatch(
+          fetchDataFulfilled(res.data, "GET_WEATHER_FIVE_DAYS_FULFILLED")
+        );
       })
       .catch(err => {
-          dispatch(fetchDataRejected(err))
-          console.log(err)});
-      
+        dispatch(fetchDataRejected(err, "GET_WEATHER_FIVE_DAYS_REJECTED"));
+        console.log(err);
+      });
   };
 };
 
-
-export const getOneDayWeather = (coords) => {
+export const getOneDayWeather = coords => {
   return async dispatch => {
-    //Dispatch the fetchData action creator before retrieving to set our loading state to true.
-    dispatch(fetchData(true));
-    //Then get the data.
-     await axios
-      .get(`https://api.openweathermap.org/data/2.5/weather?lat=${
-             coords.latitude
-           }&lon=${
-             coords.longitude  
-           }&units=${units}&APPID=${appId}`)
+    dispatch(fetchData(true, "GET_WEATHER_ONE_DAY"));
+    await axios
+      .get(
+        `https://api.openweathermap.org/data/2.5/weather?lat=${
+          coords.latitude
+        }&lon=${coords.longitude}&units=${units}&APPID=${appId}`
+      )
       .then(res => {
-        //Set the results to the people array.
-        dispatch(fetchDataFulfilled(res.data));
-        //Error handle the promise and set your errorMessage
+        dispatch(fetchDataFulfilled(res.data, "GET_WEATHER_ONE_DAY_FULFILLED"));
+
       })
       .catch(err => {
-          dispatch(fetchDataRejected(err))
-          console.log(err)});
-      
+        dispatch(fetchDataRejected(err, "GET_WEATHER_ONE_DAY_REJECTED"));
+        console.log(err);
+      });
   };
 };
 
+export const searchOneDayWeather = cityName => {
+  return async dispatch => {
+    dispatch(fetchData(true, "GET_WEATHER_ONE_DAY"));
+    await axios
+      .get(
+        `https://api.openweathermap.org/data/2.5/weather?q=London
+      &units=${units}
+      &APPID=${appId}`
+      )
+      .then(res => {
+        console.log(res)
+        dispatch(fetchDataFulfilled(res.data, "GET_WEATHER_ONE_DAY_FULFILLED"));
+      })
+      .catch(err => {
+        dispatch(fetchDataRejected(err, "GET_WEATHER_ONE_DAY_REJECTED"));
+        console.log(err);
+      });
+  };
+};
 
-
-export default createStore(reducers, applyMiddleware(thunk));
+export default createStore(reducers, applyMiddleware(thunk,logger));

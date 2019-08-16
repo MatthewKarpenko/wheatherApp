@@ -1,11 +1,12 @@
 import React, { PureComponent } from "react";
 import { createAppContainer, createStackNavigator } from "react-navigation";
-import { Animated, Easing, Platform } from 'react-native';
+import { Animated, Easing } from 'react-native';
 import { Provider } from "react-redux";
 
 import HomeScreen from "./HomeScreen";
 import DetailsScreen from "./DetailsScreen";
 import store from "../redux/store";
+import StartScreen from './StartScreen'
 
 let SlideFromBottom = (index, position, height) => {
   const translateY = position.interpolate({
@@ -48,6 +49,12 @@ const AppNavigator = createStackNavigator(
     },
     Details: {
       screen: DetailsScreen,
+      navigationOptions: {
+        header: null
+      }
+    },
+    StartScreen: {
+      screen: StartScreen,
       navigationOptions: {
         header: null
       }

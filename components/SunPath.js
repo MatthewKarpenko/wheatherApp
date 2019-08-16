@@ -3,8 +3,9 @@ import Svg, { Path, Circle } from "react-native-svg";
 import { View, StyleSheet, Dimensions, Text } from "react-native";
 import moment from "moment";
 import * as path from "svg-path-properties";
+import { connect } from "react-redux";
 
-export default class SunPath extends Component {
+class SunPath extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -22,11 +23,11 @@ export default class SunPath extends Component {
 
     this.sunPath = React.createRef();
     this.sun = React.createRef();
-  }
+  };
 
   showCurrentSunPosition = sunInfo => {
     let currentTimeUnix = moment().unix();
- 
+
     const { sunrise, sunset } = sunInfo;
     let percentOfDay = (currentTimeUnix - sunrise) / (sunset - sunrise);
     let percentOfNight;
@@ -36,13 +37,13 @@ export default class SunPath extends Component {
     } else {
       percentOfNight =
         1 - (sunrise - currentTimeUnix) / (86400 - (sunset - sunrise));
-    }
+    };
 
     this.setState({
       sunriseTime: moment(new Date(sunrise * 1000)).format("H:mm"),
       sunsetTime: moment(new Date(sunset * 1000)).format("H:mm")
     });
-   
+
     if (currentTimeUnix >= sunrise && currentTimeUnix < sunset) {
       this.displaySunPath(percentOfDay, "day");
     } else {
@@ -50,37 +51,23 @@ export default class SunPath extends Component {
     }
   };
 
-  displaySunPath = (percent, time) => {
-    //let sunPath = document.getElementById('sun-path');
+  displaySunPath = percent => {
     let mainPath = path.svgPathProperties(this.state.pathProp);
     let sunPathTotal = mainPath.getTotalLength();
-
     let sunPathCurrent = sunPathTotal * (1 - percent);
-    
-    // get position of length
     let sunPosition = mainPath.getPointAtLength(sunPathTotal - sunPathCurrent);
 
-   
     this.setState({
       strokeDasharray: sunPathTotal,
       strokeDashoffset: sunPathCurrent,
       cx: sunPosition.x,
       cy: sunPosition.y
     });
-
-    // if (time === 'night') {
-    //     this.setState({
-    //       strokeColor: '#C5C3C6',
-    //       fillColor: '#C5C3C6'
-    //    });
-    // }
   };
 
-  componentWillReceiveProps(nextProps) {
-    if (this.props.weatherInfo != nextProps.weatherInfo) {
-      this.showCurrentSunPosition(nextProps.weatherInfo.sys);
-    }
-  }
+  componentDidMount() {
+    this.showCurrentSunPosition(this.props.sunPathInfo);
+  };
 
   render() {
     return (
@@ -156,3 +143,15 @@ const styles = StyleSheet.create({
     textAlign: "center"
   }
 });
+
+const mapStateToProps = state => {
+  const { oneDayWeather } = state.oneDayWeatherReducer;
+  return {
+    sunPathInfo: oneDayWeather.sys
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  {}
+)(SunPath);

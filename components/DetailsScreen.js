@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, PermissionsAndroid } from "react-native";
+import { StyleSheet, View } from "react-native";
 import MaterialCommunityIcon from "react-native-vector-icons/MaterialCommunityIcons";
 import GestureRecognizer from 'react-native-swipe-gestures';
 
 import CurrentDayDetails from './CurrentDayDetails';
+import FiveDaysWeather from './FiveDaysWeather'
 
 export default class DetailsScreen extends Component {
     render() {
@@ -38,7 +39,17 @@ export default class DetailsScreen extends Component {
                   this.props.navigation.goBack()
                 }
               />
+               <MaterialCommunityIcon
+                name="cloud-search-outline"
+                size={35}
+                color={"#3C3C3B"}
+                style={styles.searchCityIcon}
+                onPress={() =>
+                  this.props.navigation.navigate("StartScreen", {})
+                }
+              />
               <CurrentDayDetails />
+              <FiveDaysWeather />
             </View>
        </GestureRecognizer>
           
@@ -49,5 +60,10 @@ export default class DetailsScreen extends Component {
 const styles = StyleSheet.create({
   showDetailsIcon: {
     alignItems: "center"
+  },
+  searchCityIcon: {
+    position: 'absolute',
+    top: 10,
+    right: 10
   }
 }); 
