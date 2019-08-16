@@ -74,4 +74,4 @@ export const searchOneDayWeather = cityName => {
   };
 };
 
-export default createStore(reducers, applyMiddleware(thunk,logger));
+export default createStore(reducers, applyMiddleware(thunk));

@@ -1,5 +1,5 @@
 import React, { PureComponent } from "react";
-import { StyleSheet, View, PermissionsAndroid, Text } from "react-native";
+import { StyleSheet, View, PermissionsAndroid, Text, Animated, Easing } from "react-native";
 import Geolocation from "react-native-geolocation-service";
 import MaterialCommunityIcon from "react-native-vector-icons/MaterialCommunityIcons";
 import GestureRecognizer from "react-native-swipe-gestures";
@@ -10,14 +10,33 @@ import SunPath from "./SunPath";
 import { getOneDayWeather, getFiveDayWeather } from "../redux/store";
 import { connect } from "react-redux";
 
+AnimatedIcon = Animated.createAnimatedComponent(MaterialCommunityIcon);
+
 class HomeScreen extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
       defColor: "#FBC244",
-      fontColor: "#3C3C3B"
+      fontColor: "#3C3C3B",
+      isLoading: false,
+      isAnimating: true,
     };
+    this.spinValue = new Animated.Value(0)
   }
+
+startLoadingAnimation = () => {
+  this.spinValue.setValue(0)
+  Animated.timing(
+    this.spinValue,
+    {
+      toValue: 1,
+      duration: 4000,
+      easing: Easing.linear,
+      useNativeDriver: true
+    }
+  ).start(() => this.startLoadingAnimation());
+} 
+
 
   getLocation = async () => {
     try {
@@ -59,6 +78,7 @@ class HomeScreen extends PureComponent {
 
   componentDidMount() {
     this.getLocation();
+    this.startLoadingAnimation();
   }
 
   render() {
@@ -66,24 +86,30 @@ class HomeScreen extends PureComponent {
       backgroundColor: this.state.defColor,
       color: this.state.fontColor
     };
-    const combineStyles = StyleSheet.flatten([dynamicStyles, styles.body]);
+    const combineMainStyles = StyleSheet.flatten([dynamicStyles, styles.body]);
+    const combineLoadingStyles = StyleSheet.flatten([dynamicStyles, styles.loadingScreen]);
     const { loading } = this.props;
     const config = {
       velocityThreshold: 0.1,
       directionalOffsetThreshold: 80
     };
+    
+    const spin = this.spinValue.interpolate({
+      inputRange: [0, 1],
+      outputRange: ['0deg', '360deg']
+    })
 
     if (!loading) {
       return (
         <GestureRecognizer
           onSwipeUp={() =>
             this.props.navigation.navigate("Details", {
-              defaultStyles: combineStyles,
+              defaultStyles: combineMainStyles,
               config
             })
           }
           config={config}
-          style={combineStyles}
+          style={combineMainStyles}
         >
           <DateAndCityName />
           <OneDayWeather />
@@ -96,7 +122,7 @@ class HomeScreen extends PureComponent {
               color={"#3C3C3B"}
               onPress={() =>
                 this.props.navigation.navigate("Details", {
-                  defaultStyles: combineStyles
+                  defaultStyles: combineMainStyles
                 })
               }
             />
@@ -104,9 +130,14 @@ class HomeScreen extends PureComponent {
         </GestureRecognizer>
       );
     } else {
+     
       return (
-        <View>
-          <Text>loading...</Text>
+        <View style={combineLoadingStyles}>
+         <AnimatedIcon 
+         name= "weather-sunny"
+         size={80}
+         style={{transform: [{rotate: spin}] }}
+         color={"#3C3C3B"}/>
         </View>
       );
     }
@@ -121,6 +152,11 @@ const styles = StyleSheet.create({
   },
   showDetailsIcon: {
     alignItems: "center"
+  },
+  loadingScreen: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   }
 });
 
