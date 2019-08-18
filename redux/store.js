@@ -2,16 +2,20 @@ import { createStore, applyMiddleware } from "redux";
 import thunk from "redux-thunk";
 import logger from "redux-logger";
 import reducers from "./reducers/weatherInfo";
+import moment from "moment";
 
 import {
   fetchData,
   fetchDataFulfilled,
-  fetchDataRejected
+  fetchDataRejected,
+  setColors
 } from "./actions/weatherActions";
 import axios from "axios";
 
 const appId = "80ac52657b8f0fd478c3980320b78a32";
 const units = "metric";
+const day = 'day';
+const night = 'night'
 
 export const getFiveDayWeather = coords => {
   return async dispatch => {
@@ -61,8 +65,8 @@ export const searchOneDayWeather = cityName => {
         `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&units=${units}&APPID=${appId}`
       )
       .then(res => {
-        console.log(res);
         dispatch(fetchDataFulfilled(res.data, "GET_WEATHER_ONE_DAY_FULFILLED"));
+        dispatch(setColorAccordingToWeather(res.data.sys.sunrise,res.data.sys.sunset))
       })
       .catch(err => {
         dispatch(fetchDataRejected(err, "GET_WEATHER_ONE_DAY_REJECTED"));
@@ -88,6 +92,30 @@ export const searchFiveDaysWeather = cityName => {
         console.log(err);
       });
   };
+};
+
+export const setColorAccordingToWeather = (sunrise, sunset) => {
+  return dispatch => {
+    let currentTimeUnix = moment().unix();
+    if (currentTimeUnix >= sunrise && currentTimeUnix < sunset) {
+      dispatch(
+        setColors("SET_COLOR_ACCORDING_TO_TIME", {
+           color: "#3C3C3B",
+           backgroundColor: "#FBC244"
+        }, day)
+      );
+      
+    } else {
+      dispatch(
+        setColors("SET_COLOR_ACCORDING_TO_TIME", {
+          color: "#FFF",
+          backgroundColor: "#3C3C3B"
+        },night)
+      );
+      
+    }
+  }
+  
 };
 
 export default createStore(reducers, applyMiddleware(thunk, logger));

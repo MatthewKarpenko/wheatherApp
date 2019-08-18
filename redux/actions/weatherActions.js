@@ -20,3 +20,11 @@ export const fetchData = (bool, type = "") => {
       loading: false
     };
   };
+
+  export const setColors = (type = '', colors, partOfTheDay) => {
+    return {
+      type,
+      payload: colors,
+      partOfTheDay
+    }
+  }

@@ -1,8 +1,9 @@
 import React, { Component } from "react";
 import { Text, View, StyleSheet, TextInput, Button } from "react-native";
 import MaterialCommunityIcon from "react-native-vector-icons/MaterialCommunityIcons";
-import { searchOneDayWeather, searchFiveDaysWeather } from "../redux/store";
+import { searchOneDayWeather, searchFiveDaysWeather, setColorAccordingToWeather } from "../redux/store";
 import { connect } from "react-redux";
+
 
 class StartScreen extends Component {
   constructor(props) {
@@ -14,7 +15,8 @@ class StartScreen extends Component {
   };
 
   showWeather = () => {
-    console.log(this.state.text)
+    const { sunrise, sunset } = this.props.oneDayWeatherInfo.sys;
+    console.log(sunrise)
     this.props.searchOneDayWeather(this.state.text);
     this.props.searchFiveDaysWeather(this.state.text);
     this.props.navigation.navigate("Home",{});
@@ -56,12 +58,21 @@ const styles = StyleSheet.create({
   }
 });
 
+const mapStateToProps = state => {
+  const { oneDayWeather } = state.oneDayWeatherReducer;
+  return {
+    oneDayWeatherInfo: oneDayWeather
+    
+  };
+};
+
 const mapDispatchToProps = {
   searchOneDayWeather,
-  searchFiveDaysWeather
+  searchFiveDaysWeather,
+  setColorAccordingToWeather
 };
 
 export default connect(
-  ()=>{return{}},
+ mapStateToProps,
   mapDispatchToProps
 )(StartScreen);

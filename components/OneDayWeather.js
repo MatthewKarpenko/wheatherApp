@@ -1,7 +1,11 @@
 import React, { Component } from "react";
 import { StyleSheet, View, Text } from "react-native";
 import MaterialCommunityIcon from "react-native-vector-icons/MaterialCommunityIcons";
+import FeatherIcon from "react-native-vector-icons/Feather";
 import { connect } from "react-redux";
+
+
+const night = 'night';
 
 class OneDayWeather extends Component {
   constructor(props) {
@@ -15,35 +19,67 @@ class OneDayWeather extends Component {
   }
 
   setIcon = id => {
+    console.log(this.props.partOfTheDay)
+    if(this.props.partOfTheDay === night) {
+      return (
+        <FeatherIcon
+        name={"moon"}
+        size={80}
+        color={this.props.screenColors.color}
+      />
+      )
+    }else {
     if (id < 300) {
-      this.setState({
-        iconType: "weather-windy"
-      });
+      return ( <MaterialCommunityIcon
+        name={"weather-windy"}
+        size={80}
+        color={this.props.screenColors.color}
+      />)
+      
     } else if (id < 500) {
-      this.setState({
-        iconType: "weather-rainy"
-      });
+      return ( <MaterialCommunityIcon
+        name={"weather-rainy"}
+        size={80}
+        color={this.props.screenColors.color}
+      />)
+      
     } else if (id < 600) {
-      this.setState({
-        iconType: "weather-pouring"
-      });
+      return ( <MaterialCommunityIcon
+        name={"weather-pouring"}
+        size={80}
+        color={this.props.screenColors.color}
+      />)
+    
     } else if (id < 700) {
-      this.setState({
-        iconType: "weather-snowy"
-      });
+      return ( <MaterialCommunityIcon
+        name={"weather-snowy"}
+        size={80}
+        color={this.props.screenColors.color}
+      />)
+      
     } else if (id < 800) {
-      this.setState({
-        iconType: "weather-cloudy"
-      });
+      return ( <MaterialCommunityIcon
+        name={"weather-cloudy"}
+        size={80}
+        color={this.props.screenColors.color}
+      />)
+     
     } else if (id === 800) {
-      this.setState({
-        iconType: "weather-sunny"
-      });
+      return ( <MaterialCommunityIcon
+        name={ "weather-sunny"}
+        size={80}
+        color={this.props.screenColors.color}
+      />)
+    
     } else {
-      this.setState({
-        iconType: "weather-cloudy"
-      });
+      return ( <MaterialCommunityIcon
+        name={"weather-cloudy"}
+        size={80}
+        color={this.props.screenColors.color}
+      />)
+     
     }
+  }
   };
 
   componentDidMount() {
@@ -61,22 +97,19 @@ class OneDayWeather extends Component {
   }
 
   render() {
+    const { screenColors } = this.props
     return (
       <View style={styles.container}>
-        <MaterialCommunityIcon
-          name={this.state.iconType}
-          size={80}
-          color={this.props.styles.color}
-        />
+        {this.setIcon()}
         <View style={styles.todayTempContainer}>
-          <Text style={[this.props.styles]}>{this.state.maxMinTemp[1]}&#176;</Text>
+          <Text style={[{color:screenColors.color}]}>{this.state.maxMinTemp[1]}&#176;</Text>
 
-          <Text style={[this.props.styles, styles.currentTemp]}>{this.state.todayTemp}&#176;</Text>
+          <Text style={[{color:screenColors.color}, styles.currentTemp]}>{this.state.todayTemp}&#176;</Text>
 
-          <Text style={[this.props.styles]}>{this.state.maxMinTemp[0]}&#176;</Text>
+          <Text style={[{color:screenColors.color}]}>{this.state.maxMinTemp[0]}&#176;</Text>
         </View>
 
-        <Text style={[this.props.styles]}>{this.state.weatherType}</Text>
+        <Text style={[{color:screenColors.color}]}>{this.state.weatherType}</Text>
       </View>
     );
   }
@@ -111,7 +144,9 @@ const mapStateToProps = state => {
   const { oneDayWeather } = state.oneDayWeatherReducer;
   return {
     oneDayWeatherInfo: oneDayWeather,
-    weatherId: oneDayWeather.weather[0].id
+    weatherId: oneDayWeather.weather[0].id,
+    screenColors: state.setColorReducer.colors,
+    partOfTheDay: state.setColorReducer.partOfTheDay
   };
 };
 

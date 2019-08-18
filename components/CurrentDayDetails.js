@@ -5,15 +5,15 @@ import { connect } from "react-redux";
 class CurrentDayDetails extends Component {
   render() {
     const { main, clouds, wind } = this.props.oneDayWeatherInfo;
-
+    const { screenColors } = this.props;
     return (
       <View>
-        <Text style={[this.props.styles]}>Details</Text>
+        <Text style={[{color: screenColors.color}]}>Details</Text>
         <View>
-          <Text style={[this.props.styles]}>Clouds:{clouds.all} %</Text>
-          <Text style={[this.props.styles]}>Humidity:{main.humidity} %</Text>
-          <Text style={[this.props.styles]}>Pressure:{main.pressure} hPa</Text>
-          <Text style={[this.props.styles]}>Wind:{wind.speed} m/s</Text>
+          <Text style={[{color: screenColors.color}]}>Clouds:{clouds.all} %</Text>
+          <Text style={[{color: screenColors.color}]}>Humidity:{main.humidity} %</Text>
+          <Text style={[{color: screenColors.color}]}>Pressure:{main.pressure} hPa</Text>
+          <Text style={[{color: screenColors.color}]}>Wind:{wind.speed} m/s</Text>
         </View>
       </View>
     );
@@ -21,7 +21,9 @@ class CurrentDayDetails extends Component {
 }
 
 const mapStateToProps = state => ({
-  oneDayWeatherInfo: state.oneDayWeatherReducer.oneDayWeather
+  oneDayWeatherInfo: state.oneDayWeatherReducer.oneDayWeather,
+  screenColors: state.setColorReducer.colors
+
 });
 
 export default connect(

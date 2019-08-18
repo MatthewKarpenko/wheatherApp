@@ -46,8 +46,8 @@ class DateAndCityName extends Component {
   render() {
     return (
       <View style={styles.mainHeader}>
-        <Text style={[this.props.styles, styles.date]}>{this.setDate()}</Text>
-        <Text style={[this.props.styles, styles.cityName]}>
+        <Text style={[{color: this.props.screenColors.color}, styles.date]}>{this.setDate()}</Text>
+        <Text style={[{color: this.props.screenColors.color}, styles.cityName]}>
           {this.props.city}
         </Text>
       </View>
@@ -75,7 +75,8 @@ const styles = StyleSheet.create({
 const mapStateToProps = state => {
   const { oneDayWeather } = state.oneDayWeatherReducer;
   return {
-    city: oneDayWeather.name
+    city: oneDayWeather.name,
+    screenColors: state.setColorReducer.colors
   };
 };
 

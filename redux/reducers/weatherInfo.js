@@ -58,8 +58,23 @@ const fiveDayWeatherReducer = (state = weatherStateForFiveDays, action) => {
   }
 };
 
-
+const SET_COLOR_ACCORDING_TO_TIME = 'SET_COLOR_ACCORDING_TO_TIME'
+const colors = {
+  colors: {
+    backgroundColor: '#FBC244',
+    color: '#3C3C3B'
+  },
+  partOfTheDay: 'day'
+}
+const setColorReducer = (state = colors, action) => {
+  switch (action.type) {
+    case SET_COLOR_ACCORDING_TO_TIME:
+      return {...state, colors: action.payload, partOfTheDay: action.partOfTheDay }
+      default:
+        return state;
+  }
+}
 
      
-export default combineReducers({oneDayWeatherReducer,fiveDayWeatherReducer});
+export default combineReducers({ oneDayWeatherReducer, fiveDayWeatherReducer, setColorReducer });
 

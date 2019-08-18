@@ -3,21 +3,18 @@ import {
   StyleSheet,
   View,
   PermissionsAndroid,
-  Animated,
-  Easing
 } from "react-native";
 import Geolocation from "react-native-geolocation-service";
 import MaterialCommunityIcon from "react-native-vector-icons/MaterialCommunityIcons";
+import FeatherIcon from "react-native-vector-icons/Feather";
 import GestureRecognizer from "react-native-swipe-gestures";
-import moment from "moment";
 import { connect } from "react-redux";
 
 import DateAndCityName from "./DateAndCityName";
 import OneDayWeather from "./OneDayWeather";
 import SunPath from "./SunPath";
-import { getOneDayWeather, getFiveDayWeather } from "../redux/store";
-
-AnimatedIcon = Animated.createAnimatedComponent(MaterialCommunityIcon);
+import { getOneDayWeather, getFiveDayWeather, setColorAccordingToWeather } from "../redux/store";
+import LoadingScreen from "./LoadingScreen";
 
 class HomeScreen extends PureComponent {
   constructor(props) {
@@ -25,21 +22,9 @@ class HomeScreen extends PureComponent {
     this.state = {
       defColor: "#FBC244",
       fontColor: "#3C3C3B",
-      isLoading: false,
-      isAnimating: true
     };
-    this.spinValue = new Animated.Value(0);
+    
   }
-
-  startLoadingAnimation = () => {
-    this.spinValue.setValue(0);
-    Animated.timing(this.spinValue, {
-      toValue: 1,
-      duration: 4000,
-      easing: Easing.linear,
-      useNativeDriver: true
-    }).start(() => this.startLoadingAnimation());
-  };
 
   getLocation = async () => {
     try {
@@ -61,7 +46,7 @@ class HomeScreen extends PureComponent {
             await this.props.getOneDayWeather(position.coords);
             await this.props.getFiveDayWeather(position.coords);
             const { sunrise, sunset } = this.props.oneDayWeatherInfo.sys;
-            this.setColorAccordingToWeather(sunrise, sunset);
+            this.props.setColorAccordingToWeather(sunrise, sunset);
           },
           error => {
             console.log(error.code, error.message);
@@ -81,46 +66,19 @@ class HomeScreen extends PureComponent {
     }
   };
 
-  setColorAccordingToWeather = (sunrise, sunset) => {
-    let currentTimeUnix = moment().unix();
-
-    if (currentTimeUnix >= sunrise && currentTimeUnix < sunset) {
-      this.setState({
-        fontColor: "#3C3C3B",
-        defColor: "#FBC244"
-      });
-    } else {
-      this.setState({
-        fontColor: "#FFF",
-        defColor: "#3C3C3B"
-      });
-    }
-  };
   componentDidMount() {
     this.getLocation();
-    this.startLoadingAnimation();
   }
 
   render() {
-    const dynamicStyles = {
-      backgroundColor: this.state.defColor,
-      color: this.state.fontColor
-    };
-    const combineMainStyles = StyleSheet.flatten([dynamicStyles, styles.body]);
-    const combineLoadingStyles = StyleSheet.flatten([
-      dynamicStyles,
-      styles.loadingScreen
-    ]);
-    const { loading } = this.props;
+    const { loading, screenColors } = this.props;
+    
+    const combineMainStyles = StyleSheet.flatten([screenColors, styles.body]);
+    
     const config = {
       velocityThreshold: 0.1,
       directionalOffsetThreshold: 80
     };
-
-    const spin = this.spinValue.interpolate({
-      inputRange: [0, 1],
-      outputRange: ["0deg", "360deg"]
-    });
 
     if (!loading) {
       return (
@@ -132,21 +90,20 @@ class HomeScreen extends PureComponent {
             })
           }
           config={config}
-          style={combineMainStyles}
+          style={[screenColors, styles.body]}
         >
-          <DateAndCityName styles={{ color: dynamicStyles.color }} />
-          <OneDayWeather styles={{ color: dynamicStyles.color }} />
-          <SunPath styles={{ color: dynamicStyles.color }} />
+          <DateAndCityName />
+          <OneDayWeather />
+          <SunPath />
 
           <View style={styles.showDetailsIcon}>
             <MaterialCommunityIcon
               name="chevron-double-down"
               size={45}
-              color={this.state.fontColor}
+              color={this.props.screenColors.color}
               onPress={() =>
                 this.props.navigation.navigate("Details", {
-                  defaultStyles: combineMainStyles,
-                  textColor: { color: dynamicStyles.color }
+                  defaultStyles: combineMainStyles
                 })
               }
             />
@@ -155,13 +112,8 @@ class HomeScreen extends PureComponent {
       );
     } else {
       return (
-        <View style={combineLoadingStyles}>
-          <AnimatedIcon
-            name="weather-sunny"
-            size={80}
-            style={{ transform: [{ rotate: spin }] }}
-            color={"#3C3C3B"}
-          />
+        <View style={[screenColors, styles.loadingScreen]}>
+        <LoadingScreen/>
         </View>
       );
     }
@@ -189,13 +141,15 @@ const mapStateToProps = state => {
   const { oneDayWeather, loading } = state.oneDayWeatherReducer;
   return {
     oneDayWeatherInfo: oneDayWeather,
-    loading
+    loading,
+    screenColors: state.setColorReducer.colors
   };
 };
 
 const mapDispatchToProps = {
   getOneDayWeather,
-  getFiveDayWeather
+  getFiveDayWeather,
+  setColorAccordingToWeather
 };
 
 export default connect(
