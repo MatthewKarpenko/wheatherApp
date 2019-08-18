@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Text, View, StyleSheet, TextInput, Button } from "react-native";
 import MaterialCommunityIcon from "react-native-vector-icons/MaterialCommunityIcons";
-import { searchOneDayWeather} from "../redux/store";
+import { searchOneDayWeather, searchFiveDaysWeather } from "../redux/store";
 import { connect } from "react-redux";
 
 class StartScreen extends Component {
@@ -11,16 +11,13 @@ class StartScreen extends Component {
       text: ''
     }
     this.input = React.createRef();
-  }
+  };
 
   showWeather = () => {
     console.log(this.state.text)
     this.props.searchOneDayWeather(this.state.text);
-    this.props.navigation.navigate("Home",{})
-  };
-
-  componentDidMount() {
-
+    this.props.searchFiveDaysWeather(this.state.text);
+    this.props.navigation.navigate("Home",{});
   };
   
   render() {
@@ -60,7 +57,8 @@ const styles = StyleSheet.create({
 });
 
 const mapDispatchToProps = {
-  searchOneDayWeather
+  searchOneDayWeather,
+  searchFiveDaysWeather
 };
 
 export default connect(

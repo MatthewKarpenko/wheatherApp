@@ -66,17 +66,17 @@ class OneDayWeather extends Component {
         <MaterialCommunityIcon
           name={this.state.iconType}
           size={80}
-          color={"#3C3C3B"}
+          color={this.props.styles.color}
         />
         <View style={styles.todayTempContainer}>
-          <Text>{this.state.maxMinTemp[0]}&#176;</Text>
+          <Text style={[this.props.styles]}>{this.state.maxMinTemp[1]}&#176;</Text>
 
-          <Text style={styles.currentTemp}>{this.state.todayTemp}&#176;</Text>
+          <Text style={[this.props.styles, styles.currentTemp]}>{this.state.todayTemp}&#176;</Text>
 
-          <Text>{this.state.maxMinTemp[1]}&#176;</Text>
+          <Text style={[this.props.styles]}>{this.state.maxMinTemp[0]}&#176;</Text>
         </View>
 
-        <Text>{this.state.weatherType}</Text>
+        <Text style={[this.props.styles]}>{this.state.weatherType}</Text>
       </View>
     );
   }

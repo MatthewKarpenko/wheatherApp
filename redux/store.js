@@ -1,6 +1,6 @@
 import { createStore, applyMiddleware } from "redux";
 import thunk from "redux-thunk";
-import logger from 'redux-logger';
+import logger from "redux-logger";
 import reducers from "./reducers/weatherInfo";
 
 import {
@@ -45,7 +45,6 @@ export const getOneDayWeather = coords => {
       )
       .then(res => {
         dispatch(fetchDataFulfilled(res.data, "GET_WEATHER_ONE_DAY_FULFILLED"));
-
       })
       .catch(err => {
         dispatch(fetchDataRejected(err, "GET_WEATHER_ONE_DAY_REJECTED"));
@@ -59,12 +58,10 @@ export const searchOneDayWeather = cityName => {
     dispatch(fetchData(true, "GET_WEATHER_ONE_DAY"));
     await axios
       .get(
-        `https://api.openweathermap.org/data/2.5/weather?q=London
-      &units=${units}
-      &APPID=${appId}`
+        `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&units=${units}&APPID=${appId}`
       )
       .then(res => {
-        console.log(res)
+        console.log(res);
         dispatch(fetchDataFulfilled(res.data, "GET_WEATHER_ONE_DAY_FULFILLED"));
       })
       .catch(err => {
@@ -74,4 +71,23 @@ export const searchOneDayWeather = cityName => {
   };
 };
 
-export default createStore(reducers, applyMiddleware(thunk));
+export const searchFiveDaysWeather = cityName => {
+  return async dispatch => {
+    dispatch(fetchData(true, "GET_WEATHER_ONE_DAY"));
+    await axios
+      .get(
+        `https://api.openweathermap.org/data/2.5/forecast?q=${cityName}&units=${units}&APPID=${appId}`
+      )
+      .then(res => {
+        dispatch(
+          fetchDataFulfilled(res.data, "GET_WEATHER_FIVE_DAYS_FULFILLED")
+        );
+      })
+      .catch(err => {
+        dispatch(fetchDataRejected(err, "GET_WEATHER_FIVE_DAYS_REJECTED"));
+        console.log(err);
+      });
+  };
+};
+
+export default createStore(reducers, applyMiddleware(thunk, logger));

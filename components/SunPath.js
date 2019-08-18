@@ -23,7 +23,7 @@ class SunPath extends Component {
 
     this.sunPath = React.createRef();
     this.sun = React.createRef();
-  };
+  }
 
   showCurrentSunPosition = sunInfo => {
     let currentTimeUnix = moment().unix();
@@ -37,7 +37,7 @@ class SunPath extends Component {
     } else {
       percentOfNight =
         1 - (sunrise - currentTimeUnix) / (86400 - (sunset - sunrise));
-    };
+    }
 
     this.setState({
       sunriseTime: moment(new Date(sunrise * 1000)).format("H:mm"),
@@ -67,7 +67,7 @@ class SunPath extends Component {
 
   componentDidMount() {
     this.showCurrentSunPosition(this.props.sunPathInfo);
-  };
+  }
 
   render() {
     return (
@@ -91,7 +91,7 @@ class SunPath extends Component {
             strokeDashoffset={this.state.strokeDashoffset}
             fillOpacity="0"
             strokeWidth="2"
-            stroke={this.state.strokeColor}
+            stroke={this.props.styles.color}
             d="M-1.5,90.5c31.28-54.36,88-85,152-85c96.65,0,149.78,81.13,152,85"
           />
           <Circle
@@ -100,17 +100,17 @@ class SunPath extends Component {
             r="7"
             cx={this.state.cx}
             cy={this.state.cy}
-            fill={this.state.fillColor}
+            fill={this.props.styles.color}
           />
         </Svg>
         <View style={styles.sunPosition}>
           <View style={styles.sunriseAndSunset}>
-            <Text>sunrise</Text>
-            <Text>{this.state.sunriseTime}</Text>
+            <Text style={[this.props.styles]}>sunrise</Text>
+            <Text style={[this.props.styles]}>{this.state.sunriseTime}</Text>
           </View>
           <View>
-            <Text>sunset</Text>
-            <Text>{this.state.sunsetTime}</Text>
+            <Text style={[this.props.styles]}>sunset</Text>
+            <Text style={[this.props.styles]}>{this.state.sunsetTime}</Text>
           </View>
         </View>
       </View>

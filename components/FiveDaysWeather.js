@@ -4,7 +4,6 @@ import { connect } from "react-redux";
 import MaterialCommunityIcon from "react-native-vector-icons/MaterialCommunityIcons";
 import moment from "moment";
 
-
 class FiveDaysWeather extends Component {
   constructor(props) {
     super(props);
@@ -55,26 +54,26 @@ class FiveDaysWeather extends Component {
     });
   };
 
-componentDidMount() {
-  this.showWeatherForFiveDays();
-}
+  componentDidMount() {
+    this.showWeatherForFiveDays();
+  }
 
   render() {
     const { fiveDayForecast } = this.state;
     return (
       <View>
         {fiveDayForecast.map(day => {
-            const {dayName, temperature, forecastIcon } = day
+          const { dayName, temperature, forecastIcon } = day;
           return (
             <View key={fiveDayForecast.indexOf(day)}>
-              <Text>{dayName}</Text>
+              <Text style={[this.props.styles]}>{dayName}</Text>
               <View>
                 <MaterialCommunityIcon
                   name={this.setIcon(forecastIcon)}
                   size={30}
-                  color={"#3C3C3B"}
+                  color={this.props.styles.color}
                 />
-                <Text>{temperature}&#176;</Text>
+                <Text style={[this.props.styles]}>{temperature}&#176;</Text>
               </View>
             </View>
           );

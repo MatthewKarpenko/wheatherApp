@@ -28,18 +28,28 @@ class DateAndCityName extends Component {
       "December"
     ];
     const fetchDate = new Date();
-    return `${day[fetchDate.getDay() - 1]}, ${fetchDate.getDate()} ${
+    let currentDay;
+
+    function setDay() {
+      if (day[fetchDate.getDay() - 1] === undefined) {
+        currentDay = "Sunday";
+      } else {
+        currentDay = day[fetchDate.getDay() - 1];
+      }
+    }
+    setDay();
+    return `${currentDay}, ${fetchDate.getDate()} ${
       month[fetchDate.getMonth()]
     } ${fetchDate.getFullYear()}`;
   }
 
   render() {
     return (
-      <View>
-        <View style={styles.mainHeader}>
-          <Text style={styles.date}>{this.setDate()}</Text>
-          <Text style={styles.cityName}>{this.props.city}</Text>
-        </View>
+      <View style={styles.mainHeader}>
+        <Text style={[this.props.styles, styles.date]}>{this.setDate()}</Text>
+        <Text style={[this.props.styles, styles.cityName]}>
+          {this.props.city}
+        </Text>
       </View>
     );
   }
@@ -63,12 +73,11 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-  const {oneDayWeather} = state.oneDayWeatherReducer
+  const { oneDayWeather } = state.oneDayWeatherReducer;
   return {
-  city: oneDayWeather.name,
-  }
+    city: oneDayWeather.name
+  };
 };
-
 
 export default connect(
   mapStateToProps,

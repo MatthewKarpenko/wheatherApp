@@ -1,30 +1,30 @@
-import React, { Component } from 'react';
-import { StyleSheet, View, Text} from "react-native";
+import React, { Component } from "react";
+import { StyleSheet, View, Text } from "react-native";
 import { connect } from "react-redux";
 
- class CurrentDayDetails extends Component {
-    render() {
-        const { main, clouds, wind } = this.props.oneDayWeatherInfo
+class CurrentDayDetails extends Component {
+  render() {
+    const { main, clouds, wind } = this.props.oneDayWeatherInfo;
 
-        return(
-            <View>
-                <Text>Details</Text>
-                <View>
-                    <Text>Clouds:{clouds.all} %</Text>
-                    <Text>Humidity:{main.humidity} %</Text>
-                    <Text>Pressure:{main.pressure}hPa</Text>
-                    <Text>Wind:{wind.speed}m/s</Text>
-                </View>
-            </View>
-        )
-    }
+    return (
+      <View>
+        <Text style={[this.props.styles]}>Details</Text>
+        <View>
+          <Text style={[this.props.styles]}>Clouds:{clouds.all} %</Text>
+          <Text style={[this.props.styles]}>Humidity:{main.humidity} %</Text>
+          <Text style={[this.props.styles]}>Pressure:{main.pressure} hPa</Text>
+          <Text style={[this.props.styles]}>Wind:{wind.speed} m/s</Text>
+        </View>
+      </View>
+    );
+  }
 }
 
 const mapStateToProps = state => ({
-    oneDayWeatherInfo: state.oneDayWeatherReducer.oneDayWeather
-  });
-  
+  oneDayWeatherInfo: state.oneDayWeatherReducer.oneDayWeather
+});
+
 export default connect(
-    mapStateToProps,
-    {}
-  )(CurrentDayDetails);
+  mapStateToProps,
+  {}
+)(CurrentDayDetails);
