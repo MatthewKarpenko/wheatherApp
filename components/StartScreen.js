@@ -1,49 +1,52 @@
 import React, { Component } from "react";
-import { Text, View, StyleSheet, TextInput, Button } from "react-native";
+import { Text, View, StyleSheet, TextInput, Button, StatusBar } from "react-native";
 import MaterialCommunityIcon from "react-native-vector-icons/MaterialCommunityIcons";
-import { searchOneDayWeather, searchFiveDaysWeather, setColorAccordingToWeather } from "../redux/store";
+import { searchOneDayWeather, searchFiveDaysWeather } from "../redux/store";
 import { connect } from "react-redux";
-
 
 class StartScreen extends Component {
   constructor(props) {
-    super(props);    
+    super(props);
     this.state = {
-      text: ''
-    }
-    this.input = React.createRef();
-  };
+      text: "",
+      errorVisibility: false
+    };
+  }
 
   showWeather = () => {
-    const { sunrise, sunset } = this.props.oneDayWeatherInfo.sys;
-    console.log(sunrise)
-    this.props.searchOneDayWeather(this.state.text);
-    this.props.searchFiveDaysWeather(this.state.text);
-    this.props.navigation.navigate("Home",{});
+    if (this.state.text.length === 0) {
+      this.setState({ errorVisibility: true });
+      setTimeout(() => this.setState({ errorVisibility: false }), 3000);
+    } else {
+      this.props.searchOneDayWeather(this.state.text);
+      this.props.searchFiveDaysWeather(this.state.text);
+      this.props.navigation.navigate("Home", {});
+    }
   };
-  
+
   render() {
+    const showErr = this.state.errorVisibility ? 1 : 0;
     return (
       <View style={styles.background}>
+          
         <MaterialCommunityIcon
           name="weather-cloudy"
           size={60}
           color={"white"}
         />
         <TextInput
-        ref={this.input}
           style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
-          onChangeText={(text) => this.setState({text})}
-        
+          onChangeText={text => this.setState({ text })}
+          onSubmitEditing={this.showWeather}
         />
 
         <Text> or </Text>
 
         <Button
-          onPress={this.showWeather}
           title="Use your location"
-          color="white"
+          color="black"
         />
+        <Text style={{ opacity: showErr }}>The field is empty *</Text>
       </View>
     );
   }
@@ -54,7 +57,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#709EA8",
     flex: 1,
     justifyContent: "center",
-    alignItems: 'center'
+    alignItems: "center"
   }
 });
 
@@ -62,17 +65,15 @@ const mapStateToProps = state => {
   const { oneDayWeather } = state.oneDayWeatherReducer;
   return {
     oneDayWeatherInfo: oneDayWeather
-    
   };
 };
 
 const mapDispatchToProps = {
   searchOneDayWeather,
-  searchFiveDaysWeather,
-  setColorAccordingToWeather
+  searchFiveDaysWeather
 };
 
 export default connect(
- mapStateToProps,
+  mapStateToProps,
   mapDispatchToProps
 )(StartScreen);

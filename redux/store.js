@@ -8,7 +8,8 @@ import {
   fetchData,
   fetchDataFulfilled,
   fetchDataRejected,
-  setColors
+  setColors,
+  setError
 } from "./actions/weatherActions";
 import axios from "axios";
 
@@ -32,8 +33,8 @@ export const getFiveDayWeather = coords => {
         );
       })
       .catch(err => {
-        dispatch(fetchDataRejected(err, "GET_WEATHER_FIVE_DAYS_REJECTED"));
-        console.log(err);
+        dispatch(sendError(err.response.status));
+        dispatch(fetchDataRejected(err,"GET_WEATHER_FIVE_DAYS_REJECTED"))
       });
   };
 };
@@ -51,8 +52,8 @@ export const getOneDayWeather = coords => {
         dispatch(fetchDataFulfilled(res.data, "GET_WEATHER_ONE_DAY_FULFILLED"));
       })
       .catch(err => {
-        dispatch(fetchDataRejected(err, "GET_WEATHER_ONE_DAY_REJECTED"));
-        console.log(err);
+        dispatch(sendError(err.response.status));
+        dispatch(fetchDataRejected(err,"GET_WEATHER_ONE_DAY_REJECTED"))
       });
   };
 };
@@ -69,8 +70,8 @@ export const searchOneDayWeather = cityName => {
         dispatch(setColorAccordingToWeather(res.data.sys.sunrise,res.data.sys.sunset))
       })
       .catch(err => {
-        dispatch(fetchDataRejected(err, "GET_WEATHER_ONE_DAY_REJECTED"));
-        console.log(err);
+        dispatch(sendError(err.response.status));
+        dispatch(fetchDataRejected(err,"GET_WEATHER_ONE_DAY_REJECTED"))
       });
   };
 };
@@ -88,8 +89,8 @@ export const searchFiveDaysWeather = cityName => {
         );
       })
       .catch(err => {
-        dispatch(fetchDataRejected(err, "GET_WEATHER_FIVE_DAYS_REJECTED"));
-        console.log(err);
+        dispatch(sendError(err.response.status));
+        dispatch(fetchDataRejected(err,"GET_WEATHER_FIVE_DAYS_REJECTED"))
       });
   };
 };
@@ -117,5 +118,17 @@ export const setColorAccordingToWeather = (sunrise, sunset) => {
   }
   
 };
+
+export const sendError = (code) => {
+  return dispatch => {
+    if(code == 404 || code == 400) {
+      dispatch(setError('TYPE_OF_ERROR',{code, text:'Sorry, we can`t find this city in our database'}, true))
+    }else if(code == 500 || code == 502 || code == 503){
+      dispatch(setError('TYPE_OF_ERROR',{code, text:'Sorry, we have some server problems'}, true))
+    }else {
+      dispatch(setError('TYPE_OF_ERROR',{code, text:'Sorry, something went wrong'}, true))
+    }
+  }
+}
 
 export default createStore(reducers, applyMiddleware(thunk, logger));

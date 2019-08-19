@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, StatusBar } from "react-native";
 import MaterialCommunityIcon from "react-native-vector-icons/MaterialCommunityIcons";
 import GestureRecognizer from "react-native-swipe-gestures";
 import { connect } from "react-redux";
@@ -10,7 +10,7 @@ import FiveDaysWeather from "./FiveDaysWeather";
 
 class DetailsScreen extends Component {
   render() {
-    const { navigation } = this.props;
+    const { navigation, screenColors } = this.props;
     const defStyles = navigation.getParam("defaultStyles", {
       backgroundColor: "#FBC244",
       margin: 0,
@@ -25,7 +25,7 @@ class DetailsScreen extends Component {
 
     return (
       <GestureRecognizer
-        onSwipeDown={() => this.props.navigation.goBack()}
+        onSwipeDown={() => navigation.goBack()}
         config={config}
         style={defStyles}
       >
@@ -33,15 +33,15 @@ class DetailsScreen extends Component {
           <MaterialCommunityIcon
             name="chevron-double-up"
             size={45}
-            color={this.props.screenColors.color}
-            onPress={() => this.props.navigation.goBack()}
+            color={screenColors.color}
+            onPress={() => navigation.goBack()}
           />
           <MaterialCommunityIcon
             name="cloud-search-outline"
             size={35}
-            color={this.props.screenColors.color}
+            color={screenColors.color}
             style={styles.searchCityIcon}
-            onPress={() => this.props.navigation.navigate("StartScreen", {})}
+            onPress={() =>  navigation.navigate("StartScreen", {})}
           />
           <CurrentDayDetails />
           <FiveDaysWeather />
@@ -63,7 +63,6 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-
   return {
     screenColors: state.setColorReducer.colors
   };

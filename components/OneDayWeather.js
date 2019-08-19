@@ -19,7 +19,6 @@ class OneDayWeather extends Component {
   }
 
   setIcon = id => {
-    console.log(this.props.partOfTheDay)
     if(this.props.partOfTheDay === night) {
       return (
         <FeatherIcon

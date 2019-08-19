@@ -3,10 +3,11 @@ import {
   StyleSheet,
   View,
   PermissionsAndroid,
+  StatusBar,
+  Text
 } from "react-native";
 import Geolocation from "react-native-geolocation-service";
 import MaterialCommunityIcon from "react-native-vector-icons/MaterialCommunityIcons";
-import FeatherIcon from "react-native-vector-icons/Feather";
 import GestureRecognizer from "react-native-swipe-gestures";
 import { connect } from "react-redux";
 
@@ -71,7 +72,7 @@ class HomeScreen extends PureComponent {
   }
 
   render() {
-    const { loading, screenColors } = this.props;
+    const { loading, screenColors, errorCheck } = this.props;
     
     const combineMainStyles = StyleSheet.flatten([screenColors, styles.body]);
     
@@ -79,8 +80,11 @@ class HomeScreen extends PureComponent {
       velocityThreshold: 0.1,
       directionalOffsetThreshold: 80
     };
+    
 
     if (!loading) {
+
+      if(!errorCheck.bool){
       return (
         <GestureRecognizer
           onSwipeUp={() =>
@@ -92,6 +96,7 @@ class HomeScreen extends PureComponent {
           config={config}
           style={[screenColors, styles.body]}
         >
+          <StatusBar backgroundColor={screenColors.backgroundColor}/>
           <DateAndCityName />
           <OneDayWeather />
           <SunPath />
@@ -109,14 +114,24 @@ class HomeScreen extends PureComponent {
             />
           </View>
         </GestureRecognizer>
-      );
-    } else {
+      )
+    }else {
+        return (
+          <View style={styles.loadingScreen}>
+            <Text>{errorCheck.code}</Text>
+            <Text>{errorCheck.text}</Text>
+          </View>
+        )
+      }
+    }else {
+      console.log(errorCheck)
       return (
         <View style={[screenColors, styles.loadingScreen]}>
         <LoadingScreen/>
         </View>
-      );
+      )
     }
+
   }
 }
 
@@ -142,7 +157,8 @@ const mapStateToProps = state => {
   return {
     oneDayWeatherInfo: oneDayWeather,
     loading,
-    screenColors: state.setColorReducer.colors
+    screenColors: state.setColorReducer.colors,
+    errorCheck: state.setErrorReducer
   };
 };
 

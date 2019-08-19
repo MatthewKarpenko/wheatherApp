@@ -27,4 +27,12 @@ export const fetchData = (bool, type = "") => {
       payload: colors,
       partOfTheDay
     }
-  }
+  };
+
+  export const setError = (type = '', errorInfo = {}, bool = false) => {
+    return {
+      type,
+      payload: errorInfo,
+      bool
+    }
+  };

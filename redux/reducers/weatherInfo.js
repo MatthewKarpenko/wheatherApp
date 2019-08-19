@@ -66,7 +66,7 @@ const colors = {
   },
   partOfTheDay: 'day'
 }
-const setColorReducer = (state = colors, action) => {
+const setColorReducer = (state = colors, action) => { 
   switch (action.type) {
     case SET_COLOR_ACCORDING_TO_TIME:
       return {...state, colors: action.payload, partOfTheDay: action.partOfTheDay }
@@ -75,6 +75,24 @@ const setColorReducer = (state = colors, action) => {
   }
 }
 
+const TYPE_OF_ERROR = 'TYPE_OF_ERROR';
+const errors = {
+  bool: false,
+  code: null,
+  text: ''
+}
+
+const setErrorReducer = (state = errors, action) => {
+
+  switch(action.type) {
+    case TYPE_OF_ERROR:
+        const { code, text} = action.payload
+      return {...state, code, text, bool: action.bool}
+      default:
+        return state 
+  }
+}
+
      
-export default combineReducers({ oneDayWeatherReducer, fiveDayWeatherReducer, setColorReducer });
+export default combineReducers({ oneDayWeatherReducer, fiveDayWeatherReducer, setColorReducer, setErrorReducer });
 
