@@ -18,13 +18,14 @@ class OneDayWeather extends Component {
     };
   }
 
-  setIcon = id => {
+  setIcon = (id, iconColor='#3C3C3B') => {
+    const { screenColors } = this.props;
     if(this.props.partOfTheDay === night) {
       return (
         <FeatherIcon
         name={"moon"}
         size={80}
-        color={this.props.screenColors.color}
+        color={iconColor}
       />
       )
     }else {
@@ -32,49 +33,49 @@ class OneDayWeather extends Component {
       return ( <MaterialCommunityIcon
         name={"weather-windy"}
         size={80}
-        color={this.props.screenColors.color}
+        color={iconColor}
       />)
       
     } else if (id < 500) {
       return ( <MaterialCommunityIcon
         name={"weather-rainy"}
         size={80}
-        color={this.props.screenColors.color}
+        color={iconColor}
       />)
       
     } else if (id < 600) {
       return ( <MaterialCommunityIcon
         name={"weather-pouring"}
         size={80}
-        color={this.props.screenColors.color}
+        color={iconColor}
       />)
     
     } else if (id < 700) {
       return ( <MaterialCommunityIcon
         name={"weather-snowy"}
         size={80}
-        color={this.props.screenColors.color}
+        color={iconColor}
       />)
       
     } else if (id < 800) {
       return ( <MaterialCommunityIcon
         name={"weather-cloudy"}
         size={80}
-        color={this.props.screenColors.color}
+        color={iconColor}
       />)
      
     } else if (id === 800) {
       return ( <MaterialCommunityIcon
         name={ "weather-sunny"}
         size={80}
-        color={this.props.screenColors.color}
+        color={iconColor}
       />)
     
     } else {
       return ( <MaterialCommunityIcon
         name={"weather-cloudy"}
         size={80}
-        color={this.props.screenColors.color}
+        color={iconColor}
       />)
      
     }
@@ -82,9 +83,9 @@ class OneDayWeather extends Component {
   };
 
   componentDidMount() {
-    const { oneDayWeatherInfo, weatherId } = this.props;
+    const { oneDayWeatherInfo, weatherId, screenColors } = this.props;
 
-    this.setIcon(weatherId);
+    this.setIcon(weatherId,screenColors.color);
     const temperatures = [];
     temperatures.unshift(Math.round(oneDayWeatherInfo.main.temp_min));
     temperatures.unshift(Math.round(oneDayWeatherInfo.main.temp_max));
@@ -101,14 +102,14 @@ class OneDayWeather extends Component {
       <View style={styles.container}>
         {this.setIcon()}
         <View style={styles.todayTempContainer}>
-          <Text style={[{color:screenColors.color}]}>{this.state.maxMinTemp[1]}&#176;</Text>
+          <Text style={screenColors}>{this.state.maxMinTemp[1]}&#176;</Text>
 
-          <Text style={[{color:screenColors.color}, styles.currentTemp]}>{this.state.todayTemp}&#176;</Text>
+          <Text style={[screenColors, styles.currentTemp]}>{this.state.todayTemp}&#176;</Text>
 
-          <Text style={[{color:screenColors.color}]}>{this.state.maxMinTemp[0]}&#176;</Text>
+          <Text style={screenColors}>{this.state.maxMinTemp[0]}&#176;</Text>
         </View>
 
-        <Text style={[{color:screenColors.color}]}>{this.state.weatherType}</Text>
+        <Text style={screenColors}>{this.state.weatherType}</Text>
       </View>
     );
   }
@@ -144,7 +145,7 @@ const mapStateToProps = state => {
   return {
     oneDayWeatherInfo: oneDayWeather,
     weatherId: oneDayWeather.weather[0].id,
-    screenColors: state.setColorReducer.colors,
+    screenColors: state.setColorReducer.colors.text,
     partOfTheDay: state.setColorReducer.partOfTheDay
   };
 };

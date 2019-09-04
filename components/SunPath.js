@@ -72,7 +72,8 @@ class SunPath extends Component {
   render() {
 
     const { screenColors } = this.props;
-
+    console.log(screenColors)
+  
     return (
       <View style={styles.sunPathContainer}>
         <Svg
@@ -94,7 +95,7 @@ class SunPath extends Component {
             strokeDashoffset={this.state.strokeDashoffset}
             fillOpacity="0"
             strokeWidth="2"
-            stroke={this.props.screenColors.color}
+            stroke={screenColors.color}
             d="M-1.5,90.5c31.28-54.36,88-85,152-85c96.65,0,149.78,81.13,152,85"
           />
           <Circle
@@ -103,17 +104,17 @@ class SunPath extends Component {
             r="7"
             cx={this.state.cx}
             cy={this.state.cy}
-            fill={this.props.screenColors.color}
+            fill={screenColors.color}
           />
         </Svg>
         <View style={styles.sunPosition}>
           <View style={styles.sunriseAndSunset}>
-            <Text style={[{color: screenColors.color}]}>sunrise</Text>
-            <Text style={[{color: screenColors.color}]}>{this.state.sunriseTime}</Text>
+            <Text style={screenColors}>sunrise</Text>
+            <Text style={screenColors}>{this.state.sunriseTime}</Text>
           </View>
           <View>
-            <Text style={[{color: screenColors.color}]}>sunset</Text>
-            <Text style={[{color: screenColors.color}]}>{this.state.sunsetTime}</Text>
+            <Text style={screenColors}>sunset</Text>
+            <Text style={screenColors}>{this.state.sunsetTime}</Text>
           </View>
         </View>
       </View>
@@ -151,7 +152,7 @@ const mapStateToProps = state => {
   const { oneDayWeather } = state.oneDayWeatherReducer;
   return {
     sunPathInfo: oneDayWeather.sys,
-    screenColors: state.setColorReducer.colors
+    screenColors: state.setColorReducer.colors.text
   };
 };
 

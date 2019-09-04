@@ -3,19 +3,19 @@ import {
   StyleSheet,
   View,
   PermissionsAndroid,
-  StatusBar,
-  Text
+  StatusBar
 } from "react-native";
 import Geolocation from "react-native-geolocation-service";
 import MaterialCommunityIcon from "react-native-vector-icons/MaterialCommunityIcons";
 import GestureRecognizer from "react-native-swipe-gestures";
 import { connect } from "react-redux";
 
+import { getOneDayWeather, getFiveDayWeather, setColorAccordingToWeather } from "../redux/store";
 import DateAndCityName from "./DateAndCityName";
 import OneDayWeather from "./OneDayWeather";
 import SunPath from "./SunPath";
-import { getOneDayWeather, getFiveDayWeather, setColorAccordingToWeather } from "../redux/store";
 import LoadingScreen from "./LoadingScreen";
+import ErrorScreen from './ErrorScreen';
 
 class HomeScreen extends PureComponent {
   constructor(props) {
@@ -72,15 +72,15 @@ class HomeScreen extends PureComponent {
   }
 
   render() {
-    const { loading, screenColors, errorCheck } = this.props;
+    const { loading, screenColors, errorCheck, navigation } = this.props;
     
-    const combineMainStyles = StyleSheet.flatten([screenColors, styles.body]);
+    const combineMainStyles = StyleSheet.flatten([{backgroundColor: screenColors.backgroundColor}, styles.body]);
     
     const config = {
       velocityThreshold: 0.1,
       directionalOffsetThreshold: 80
     };
-    
+    console.log(screenColors)
 
     if (!loading) {
 
@@ -88,13 +88,13 @@ class HomeScreen extends PureComponent {
       return (
         <GestureRecognizer
           onSwipeUp={() =>
-            this.props.navigation.navigate("Details", {
+            navigation.navigate("Details", {
               defaultStyles: combineMainStyles,
               config
             })
           }
           config={config}
-          style={[screenColors, styles.body]}
+          style={[{backgroundColor: screenColors.backgroundColor}, styles.body]}
         >
           <StatusBar backgroundColor={screenColors.backgroundColor}/>
           <DateAndCityName />
@@ -105,9 +105,9 @@ class HomeScreen extends PureComponent {
             <MaterialCommunityIcon
               name="chevron-double-down"
               size={45}
-              color={this.props.screenColors.color}
+              color={screenColors.text.color}
               onPress={() =>
-                this.props.navigation.navigate("Details", {
+                navigation.navigate("Details", {
                   defaultStyles: combineMainStyles
                 })
               }
@@ -117,14 +117,11 @@ class HomeScreen extends PureComponent {
       )
     }else {
         return (
-          <View style={styles.loadingScreen}>
-            <Text>{errorCheck.code}</Text>
-            <Text>{errorCheck.text}</Text>
-          </View>
+          // navigation.navigate("ErrorScreen")
+          <ErrorScreen navigation={navigation}/>
         )
       }
     }else {
-      console.log(errorCheck)
       return (
         <View style={[screenColors, styles.loadingScreen]}>
         <LoadingScreen/>

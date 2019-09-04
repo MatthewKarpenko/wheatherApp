@@ -8,12 +8,12 @@ class CurrentDayDetails extends Component {
     const { screenColors } = this.props;
     return (
       <View>
-        <Text style={[{color: screenColors.color}]}>Details</Text>
+        <Text style={[screenColors]}>Details</Text>
         <View>
-          <Text style={[{color: screenColors.color}]}>Clouds:{clouds.all} %</Text>
-          <Text style={[{color: screenColors.color}]}>Humidity:{main.humidity} %</Text>
-          <Text style={[{color: screenColors.color}]}>Pressure:{main.pressure} hPa</Text>
-          <Text style={[{color: screenColors.color}]}>Wind:{wind.speed} m/s</Text>
+          <Text style={[screenColors]}>Clouds:{clouds.all} %</Text>
+          <Text style={[screenColors]}>Humidity:{main.humidity} %</Text>
+          <Text style={[screenColors]}>Pressure:{main.pressure} hPa</Text>
+          <Text style={[screenColors]}>Wind:{wind.speed} m/s</Text>
         </View>
       </View>
     );
@@ -22,8 +22,7 @@ class CurrentDayDetails extends Component {
 
 const mapStateToProps = state => ({
   oneDayWeatherInfo: state.oneDayWeatherReducer.oneDayWeather,
-  screenColors: state.setColorReducer.colors
-
+  screenColors: state.setColorReducer.colors.text
 });
 
 export default connect(

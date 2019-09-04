@@ -100,17 +100,22 @@ export const setColorAccordingToWeather = (sunrise, sunset) => {
     let currentTimeUnix = moment().unix();
     if (currentTimeUnix >= sunrise && currentTimeUnix < sunset) {
       dispatch(
-        setColors("SET_COLOR_ACCORDING_TO_TIME", {
-           color: "#3C3C3B",
-           backgroundColor: "#FBC244"
-        }, day)
+        setColors("SET_COLOR_ACCORDING_TO_TIME",{
+          backgroundColor: '#FBC244',
+          text: {
+            color: '#3C3C3B',
+            fontFamily: 'Montserrat-Regular',
+          } }, day)
       );
       
     } else {
       dispatch(
         setColors("SET_COLOR_ACCORDING_TO_TIME", {
-          color: "#FFF",
-          backgroundColor: "#3C3C3B"
+          backgroundColor: "#3C3C3B",
+          text: {
+            color: "#FFF",
+            fontFamily: 'Montserrat-Regular',
+          }
         },night)
       );
       

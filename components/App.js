@@ -6,7 +6,8 @@ import { Provider } from "react-redux";
 import HomeScreen from "./HomeScreen";
 import DetailsScreen from "./DetailsScreen";
 import store from "../redux/store";
-import StartScreen from './StartScreen'
+import StartScreen from './StartScreen';
+import ErrorScreen from './ErrorScreen';
 
 let SlideFromBottom = (index, position, height) => {
   const translateY = position.interpolate({
@@ -58,7 +59,8 @@ const AppNavigator = createStackNavigator(
       navigationOptions: {
         header: null
       }
-    }
+    },
+
   },
   {
     initialRouteName: "Home",

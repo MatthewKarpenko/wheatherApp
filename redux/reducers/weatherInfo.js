@@ -62,7 +62,10 @@ const SET_COLOR_ACCORDING_TO_TIME = 'SET_COLOR_ACCORDING_TO_TIME'
 const colors = {
   colors: {
     backgroundColor: '#FBC244',
-    color: '#3C3C3B'
+    text: {
+      color: '#3C3C3B',
+      fontFamily: 'Montserrat-Regular',
+    }
   },
   partOfTheDay: 'day'
 }

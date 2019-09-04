@@ -1,8 +1,10 @@
 import React, { Component } from "react";
-import { Text, View, StyleSheet, TextInput, Button, StatusBar } from "react-native";
+import { Text, View, StyleSheet, TextInput, Button } from "react-native";
 import MaterialCommunityIcon from "react-native-vector-icons/MaterialCommunityIcons";
 import { searchOneDayWeather, searchFiveDaysWeather } from "../redux/store";
 import { connect } from "react-redux";
+import GestureRecognizer from "react-native-swipe-gestures";
+
 
 class StartScreen extends Component {
   constructor(props) {
@@ -26,8 +28,13 @@ class StartScreen extends Component {
 
   render() {
     const showErr = this.state.errorVisibility ? 1 : 0;
+    const { screenColors } = this.props;
+    
     return (
-      <View style={styles.background}>
+      <GestureRecognizer style={styles.background}
+      onSwipeDown={() =>
+      this.props.navigation.goBack()}
+    >
           
         <MaterialCommunityIcon
           name="weather-cloudy"
@@ -40,14 +47,15 @@ class StartScreen extends Component {
           onSubmitEditing={this.showWeather}
         />
 
-        <Text> or </Text>
+        <Text style={screenColors}> or </Text>
 
         <Button
           title="Use your location"
           color="black"
         />
-        <Text style={{ opacity: showErr }}>The field is empty *</Text>
-      </View>
+        <Text style={[screenColors, { opacity: showErr }]}>The field is empty *</Text>
+      
+      </GestureRecognizer>
     );
   }
 }
@@ -64,7 +72,8 @@ const styles = StyleSheet.create({
 const mapStateToProps = state => {
   const { oneDayWeather } = state.oneDayWeatherReducer;
   return {
-    oneDayWeatherInfo: oneDayWeather
+    oneDayWeatherInfo: oneDayWeather,
+    screenColors: state.setColorReducer.colors.text,
   };
 };
 

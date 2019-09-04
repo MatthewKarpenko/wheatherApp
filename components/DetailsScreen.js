@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StyleSheet, View, StatusBar } from "react-native";
+import { StyleSheet, View } from "react-native";
 import MaterialCommunityIcon from "react-native-vector-icons/MaterialCommunityIcons";
 import GestureRecognizer from "react-native-swipe-gestures";
 import { connect } from "react-redux";
@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => {
   return {
-    screenColors: state.setColorReducer.colors
+    screenColors: state.setColorReducer.colors.text
   };
 };
 

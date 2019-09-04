@@ -50,7 +50,7 @@ class LoadingScreen extends Component {
 
 const mapStateToProps = state => {
     return {
-      screenColors: state.setColorReducer.colors
+      screenColors: state.setColorReducer.colors.text
     };
   };
   

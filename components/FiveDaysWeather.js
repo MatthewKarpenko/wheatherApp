@@ -67,14 +67,14 @@ class FiveDaysWeather extends Component {
           const { dayName, temperature, forecastIcon } = day;
           return (
             <View key={fiveDayForecast.indexOf(day)}>
-              <Text style={[{color: screenColors.color}]}>{dayName}</Text>
+              <Text style={[screenColors]}>{dayName}</Text>
               <View>
                 <MaterialCommunityIcon
                   name={this.setIcon(forecastIcon)}
                   size={30}
-                  color={this.props.screenColors.color}
+                  color={screenColors.color}
                 />
-                <Text style={[{color: screenColors.color}]}>{temperature}&#176;</Text>
+                <Text style={[screenColors]}>{temperature}&#176;</Text>
               </View>
             </View>
           );
@@ -87,7 +87,7 @@ class FiveDaysWeather extends Component {
 const mapStateToProps = state => {
   return {
     fiveDaysWeatherInfo: state.fiveDayWeatherReducer.fiveDaysWeather,
-    screenColors: state.setColorReducer.colors
+    screenColors: state.setColorReducer.colors.text
   };
 };
 
