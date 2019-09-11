@@ -1,8 +1,11 @@
 import React, { Component } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Text } from "react-native";
 import MaterialCommunityIcon from "react-native-vector-icons/MaterialCommunityIcons";
 import GestureRecognizer from "react-native-swipe-gestures";
 import { connect } from "react-redux";
+import {
+  widthPercentageToDP as wp,
+} from 'react-native-responsive-screen';
 
 import CurrentDayDetails from "./CurrentDayDetails";
 import FiveDaysWeather from "./FiveDaysWeather";
@@ -11,6 +14,7 @@ import FiveDaysWeather from "./FiveDaysWeather";
 class DetailsScreen extends Component {
   render() {
     const { navigation, screenColors } = this.props;
+    const { showDetailsIcon, searchCityIcon, cityName } = styles;
     const defStyles = navigation.getParam("defaultStyles", {
       backgroundColor: "#FBC244",
       margin: 0,
@@ -29,7 +33,7 @@ class DetailsScreen extends Component {
         config={config}
         style={defStyles}
       >
-        <View style={styles.showDetailsIcon}>
+        <View style={showDetailsIcon}>
           <MaterialCommunityIcon
             name="chevron-double-up"
             size={45}
@@ -40,9 +44,10 @@ class DetailsScreen extends Component {
             name="cloud-search-outline"
             size={35}
             color={screenColors.color}
-            style={styles.searchCityIcon}
+            style={searchCityIcon}
             onPress={() =>  navigation.navigate("StartScreen", {})}
           />
+          <Text style={[screenColors, cityName]}> {this.props.city} </Text>
           <CurrentDayDetails />
           <FiveDaysWeather />
         </View>
@@ -59,11 +64,18 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 10,
     right: 10
+  },
+  cityName: {
+    marginTop: wp('4%'),
+    marginBottom: wp('8%'),
+    fontSize: wp('9%')
   }
 });
 
 const mapStateToProps = state => {
+  const { oneDayWeather } = state.oneDayWeatherReducer;
   return {
+    city: oneDayWeather.name,
     screenColors: state.setColorReducer.colors.text
   };
 };

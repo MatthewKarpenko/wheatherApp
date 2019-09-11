@@ -1,9 +1,15 @@
 import React, { Component } from "react";
-import { Text, View, StyleSheet, TextInput, Button } from "react-native";
+import { Text, StyleSheet, TextInput, PermissionsAndroid, View   } from "react-native";
 import MaterialCommunityIcon from "react-native-vector-icons/MaterialCommunityIcons";
-import { searchOneDayWeather, searchFiveDaysWeather } from "../redux/store";
+import EvilIcon from "react-native-vector-icons/EvilIcons";
+import { searchOneDayWeather, searchFiveDaysWeather, getOneDayWeather, getFiveDayWeather, setColorAccordingToWeather } from "../redux/store";
 import { connect } from "react-redux";
 import GestureRecognizer from "react-native-swipe-gestures";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp
+} from "react-native-responsive-screen";
+import Geolocation from "react-native-geolocation-service";
 
 
 class StartScreen extends Component {
@@ -14,6 +20,47 @@ class StartScreen extends Component {
       errorVisibility: false
     };
   }
+
+  getLocation = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        {
+          title: "Cool Location Permission",
+          message:
+            "Cool Location App needs access to your location " +
+            "so you can take awesome forecast.",
+          buttonNeutral: "Ask Me Later",
+          buttonNegative: "Cancel",
+          buttonPositive: "OK"
+        }
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        Geolocation.getCurrentPosition(
+          async position => {
+            await this.props.getOneDayWeather(position.coords);
+            await this.props.getFiveDayWeather(position.coords);
+            const { sunrise, sunset } = this.props.oneDayWeatherInfo.sys;
+            this.props.setColorAccordingToWeather(sunrise, sunset);
+            this.props.navigation.navigate("Home", {});
+          },
+          error => {
+            console.log(error.code, error.message);
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 15000,
+            maximumAge: 10000
+          }
+        );
+        console.log("You can use location");
+      } else {
+        console.log("location permission denied");
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  };
 
   showWeather = () => {
     if (this.state.text.length === 0) {
@@ -29,30 +76,40 @@ class StartScreen extends Component {
   render() {
     const showErr = this.state.errorVisibility ? 1 : 0;
     const { screenColors } = this.props;
+    const { background, textStyle, buttonStyles, textInputStyles} = styles;
     
     return (
-      <GestureRecognizer style={styles.background}
+      <GestureRecognizer style={background}
       onSwipeDown={() =>
       this.props.navigation.goBack()}
     >
           
         <MaterialCommunityIcon
           name="weather-cloudy"
-          size={60}
+          size={wp('30%')}
           color={"white"}
         />
+        
         <TextInput
-          style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
+          style={textInputStyles}
           onChangeText={text => this.setState({ text })}
+          placeholder='Search for a city'
           onSubmitEditing={this.showWeather}
+          maxLength={85}
+          placeholderTextColor='white'
+          
         />
 
-        <Text style={screenColors}> or </Text>
+        <Text style={[textStyle,{fontFamily:'Montserrat-Bold'}]}> or </Text>
 
-        <Button
-          title="Use your location"
-          color="black"
+        <View style={buttonStyles} >
+        <Text onPress={()=>{this.getLocation()}} style={[textStyle, {fontFamily: 'Montserrat-Light'}]} >Use your location</Text>
+        <EvilIcon
+          name="location"
+          size={wp('7%')}
+          color={"white"}
         />
+        </View>
         <Text style={[screenColors, { opacity: showErr }]}>The field is empty *</Text>
       
       </GestureRecognizer>
@@ -66,6 +123,33 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center"
+  },
+  textStyle: {
+    fontSize: wp('5%'),
+    color: 'white'
+   
+  },
+  buttonStyles: {
+    display: 'flex',
+    flexDirection: 'row',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: 'white',
+    color: 'white',
+    textAlign: 'center',
+    overflow: 'hidden',
+    padding: 10,
+    marginTop: wp('3%')
+  },
+  textInputStyles: {
+    width: wp('52%'),
+    fontSize: wp('5%'),
+    fontFamily: 'Montserrat-Light',
+    borderBottomColor: 'white',
+    paddingBottom: 1,
+    borderBottomWidth: 1,
+    color: 'white',
+    marginBottom: wp('3%')
   }
 });
 
@@ -79,7 +163,10 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = {
   searchOneDayWeather,
-  searchFiveDaysWeather
+  searchFiveDaysWeather,
+  getOneDayWeather, 
+  getFiveDayWeather,
+  setColorAccordingToWeather
 };
 
 export default connect(

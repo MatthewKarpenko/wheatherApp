@@ -10,6 +10,7 @@ import MaterialCommunityIcon from "react-native-vector-icons/MaterialCommunityIc
 import GestureRecognizer from "react-native-swipe-gestures";
 import { connect } from "react-redux";
 
+
 import { getOneDayWeather, getFiveDayWeather, setColorAccordingToWeather } from "../redux/store";
 import DateAndCityName from "./DateAndCityName";
 import OneDayWeather from "./OneDayWeather";

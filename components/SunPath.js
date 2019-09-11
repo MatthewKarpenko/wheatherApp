@@ -108,13 +108,13 @@ class SunPath extends Component {
           />
         </Svg>
         <View style={styles.sunPosition}>
-          <View style={styles.sunriseAndSunset}>
-            <Text style={screenColors}>sunrise</Text>
-            <Text style={screenColors}>{this.state.sunriseTime}</Text>
+          <View>
+            <Text style={[screenColors,styles.sunRiseAndSunset]}>sunrise</Text>
+            <Text style={[screenColors,styles.sunRiseAndSunset]}>{this.state.sunriseTime}</Text>
           </View>
           <View>
-            <Text style={screenColors}>sunset</Text>
-            <Text style={screenColors}>{this.state.sunsetTime}</Text>
+            <Text style={[screenColors,styles.sunRiseAndSunset]}>sunset</Text>
+            <Text style={[screenColors,styles.sunRiseAndSunset]}>{this.state.sunsetTime}</Text>
           </View>
         </View>
       </View>

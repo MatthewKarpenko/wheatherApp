@@ -1,6 +1,9 @@
 import React, { Component } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { connect } from "react-redux";
+import {
+  widthPercentageToDP as wp,
+} from 'react-native-responsive-screen';
 
 class DateAndCityName extends Component {
   setDate() {
@@ -58,8 +61,9 @@ class DateAndCityName extends Component {
 
 const styles = StyleSheet.create({
   date: {
-    fontSize: 10,
-    fontWeight: "400"
+    fontSize: wp('3,5%'),
+    fontWeight: "400",
+    textAlign: 'center'
   },
   mainHeader: {
     alignSelf: "center",
@@ -67,9 +71,10 @@ const styles = StyleSheet.create({
     marginTop: 20
   },
   cityName: {
-    fontSize: 30,
-    fontWeight: "300",
-    marginTop: 20
+    fontSize: wp('10%'),
+    fontFamily: 'MontserratAlternates-Light',
+    marginTop: 20,
+    textAlign: 'center'
   }
 });
 
