@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { StyleSheet, View, Text } from "react-native";
 import MaterialCommunityIcon from "react-native-vector-icons/MaterialCommunityIcons";
-import FeatherIcon from "react-native-vector-icons/Feather";
 import { connect } from "react-redux";
 import {
   widthPercentageToDP as wp,
@@ -22,9 +21,14 @@ class OneDayWeather extends Component {
   }
 
   setIcon = (id, iconColor = "#3C3C3B") => {
-
     if (this.props.partOfTheDay === night) {
-      return <FeatherIcon name={"moon"} size={110} color={iconColor} />;
+      return (
+        <MaterialCommunityIcon
+          name={"weather-night"}
+          size={110}
+          color={iconColor}
+        />
+      );
     } else {
       if (id < 300) {
         return (
@@ -87,9 +91,8 @@ class OneDayWeather extends Component {
   };
 
   componentDidMount() {
-    const { oneDayWeatherInfo, weatherId, screenColors } = this.props;
+    const { oneDayWeatherInfo } = this.props;
 
-    this.setIcon(weatherId, screenColors.color);
     const temperatures = [];
     temperatures.unshift(Math.round(oneDayWeatherInfo.main.temp_min));
     temperatures.unshift(Math.round(oneDayWeatherInfo.main.temp_max));
@@ -101,12 +104,18 @@ class OneDayWeather extends Component {
   }
 
   render() {
-    const { screenColors } = this.props;
-    const { partTempStyles, tempStyles, currentTemp, container,
-    todayTempContainer} = styles;
+    const { screenColors, weatherId } = this.props;
+    const {
+      partTempStyles,
+      tempStyles,
+      currentTemp,
+      container,
+      todayTempContainer,
+      weatherName
+    } = styles;
     return (
-      <View style={{marginBottom: wp('7%'), marginTop: wp('5%')}}>
-        <View style={container}>{this.setIcon()}</View>
+      <View style={{ marginTop: hp("2%") }}>
+        <View style={container}>{this.setIcon(weatherId, screenColors.color)}</View>
         <View style={todayTempContainer}>
           <View style={tempStyles}>
             <MaterialCommunityIcon
@@ -114,24 +123,28 @@ class OneDayWeather extends Component {
               size={10}
               color={screenColors.color}
             />
-            <Text style={[screenColors, partTempStyles]}>{this.state.maxMinTemp[1]}&#176;</Text>
+            <Text style={[screenColors, partTempStyles]}>
+              {this.state.maxMinTemp[1]}&#176;
+            </Text>
           </View>
-        
+        <View>
           <Text style={[screenColors, currentTemp]}>
             {this.state.todayTemp}&#176;
           </Text>
-
+        </View>
           <View style={tempStyles}>
             <MaterialCommunityIcon
               name={"arrow-up"}
               size={10}
               color={screenColors.color}
             />
-            <Text style={[screenColors, partTempStyles]}>{this.state.maxMinTemp[0]}&#176;</Text>
+            <Text style={[screenColors, partTempStyles]}>
+              {this.state.maxMinTemp[0]}&#176;
+            </Text>
           </View>
         </View>
 
-        <Text style={[screenColors, partTempStyles ]}>
+        <Text style={[screenColors, weatherName]}>
           {this.state.weatherType}
         </Text>
       </View>
@@ -141,29 +154,34 @@ class OneDayWeather extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: "center",
-    
+    alignItems: "center"
   },
-
   todayTempContainer: {
     display: "flex",
     flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-around"
+    alignItems: 'center',
+    justifyContent: "space-around",
+    marginTop: wp("3%")
   },
-
   currentTemp: {
     fontSize: wp("18%"),
-    fontFamily: "MontserratAlternates-Light"
+    fontFamily: "Montserrat-Light"
   },
   tempStyles: {
     display: "flex",
     flexDirection: "row",
-    alignItems: "center"
+    alignItems: 'center'
   },
   partTempStyles: {
+    textAlign: "center",
+    fontSize: wp("4%"),
+  },
+  weatherName: {
+    marginTop: hp('3%'),
     textAlign: 'center',
-    fontSize: wp('4%')
+    marginBottom: hp('-2.7%'),
+    fontSize: wp('5%'),
+    fontFamily: 'Montserrat-Regular'
   }
 });
 

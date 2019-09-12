@@ -118,7 +118,6 @@ class HomeScreen extends PureComponent {
       )
     }else {
         return (
-          // navigation.navigate("ErrorScreen")
           <ErrorScreen navigation={navigation}/>
         )
       }

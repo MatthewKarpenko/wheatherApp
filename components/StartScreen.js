@@ -1,8 +1,22 @@
 import React, { Component } from "react";
-import { Text, StyleSheet, TextInput, PermissionsAndroid, View   } from "react-native";
+import {
+  Text,
+  StyleSheet,
+  TextInput,
+  PermissionsAndroid,
+  View,
+  TouchableOpacity
+} from "react-native";
 import MaterialCommunityIcon from "react-native-vector-icons/MaterialCommunityIcons";
 import EvilIcon from "react-native-vector-icons/EvilIcons";
-import { searchOneDayWeather, searchFiveDaysWeather, getOneDayWeather, getFiveDayWeather, setColorAccordingToWeather } from "../redux/store";
+import MaterialIcon from "react-native-vector-icons/MaterialIcons";
+import {
+  searchOneDayWeather,
+  searchFiveDaysWeather,
+  getOneDayWeather,
+  getFiveDayWeather,
+  setColorAccordingToWeather
+} from "../redux/store";
 import { connect } from "react-redux";
 import GestureRecognizer from "react-native-swipe-gestures";
 import {
@@ -10,7 +24,6 @@ import {
   heightPercentageToDP as hp
 } from "react-native-responsive-screen";
 import Geolocation from "react-native-geolocation-service";
-
 
 class StartScreen extends Component {
   constructor(props) {
@@ -75,43 +88,59 @@ class StartScreen extends Component {
 
   render() {
     const showErr = this.state.errorVisibility ? 1 : 0;
-    const { screenColors } = this.props;
-    const { background, textStyle, buttonStyles, textInputStyles} = styles;
-    
+    const { screenColors, navigation } = this.props;
+    const {
+      background,
+      textStyle,
+      buttonStyles,
+      textInputStyles,
+      backButton
+    } = styles;
+
     return (
-      <GestureRecognizer style={background}
-      onSwipeDown={() =>
-      this.props.navigation.goBack()}
-    >
-          
+      <GestureRecognizer
+        style={background}
+        onSwipeDown={() => navigation.goBack()}
+      >
+        <MaterialIcon
+          name="arrow-back"
+          size={wp("9%")}
+          color={"white"}
+          style={backButton}
+          onPress={() => navigation.navigate("Home", {})}
+        />
+
         <MaterialCommunityIcon
           name="weather-cloudy"
-          size={wp('30%')}
+          size={wp("30%")}
           color={"white"}
         />
-        
+
         <TextInput
           style={textInputStyles}
           onChangeText={text => this.setState({ text })}
-          placeholder='Search for a city'
+          placeholder="Search for a city"
           onSubmitEditing={this.showWeather}
           maxLength={85}
-          placeholderTextColor='white'
-          
+          placeholderTextColor="white"
         />
 
-        <Text style={[textStyle,{fontFamily:'Montserrat-Bold'}]}> or </Text>
+        <Text style={[textStyle, { fontFamily: "Montserrat-Bold" }]}> or </Text>
 
-        <View style={buttonStyles} >
-        <Text onPress={()=>{this.getLocation()}} style={[textStyle, {fontFamily: 'Montserrat-Light'}]} >Use your location</Text>
-        <EvilIcon
-          name="location"
-          size={wp('7%')}
-          color={"white"}
-        />
-        </View>
-        <Text style={[screenColors, { opacity: showErr }]}>The field is empty *</Text>
-      
+        <TouchableOpacity onPress={() => {
+              this.getLocation();
+            }} style={buttonStyles}>
+          <Text
+            
+            style={[textStyle, { fontFamily: "Montserrat-Light" }]}
+          >
+            Use your location
+          </Text>
+          <EvilIcon name="location" size={wp("7%")} color={"white"} />
+        </TouchableOpacity>
+        <Text style={[screenColors, { opacity: showErr }]}>
+          The field is empty *
+        </Text>
       </GestureRecognizer>
     );
   }
@@ -125,31 +154,35 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   textStyle: {
-    fontSize: wp('5%'),
-    color: 'white'
-   
+    fontSize: wp("5%"),
+    color: "white"
   },
   buttonStyles: {
-    display: 'flex',
-    flexDirection: 'row',
+    display: "flex",
+    flexDirection: "row",
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: 'white',
-    color: 'white',
-    textAlign: 'center',
-    overflow: 'hidden',
+    borderColor: "white",
+    color: "white",
+    textAlign: "center",
+    overflow: "hidden",
     padding: 10,
-    marginTop: wp('3%')
+    marginTop: wp("3%")
   },
   textInputStyles: {
-    width: wp('52%'),
-    fontSize: wp('5%'),
-    fontFamily: 'Montserrat-Light',
-    borderBottomColor: 'white',
+    width: wp("52%"),
+    fontSize: wp("5%"),
+    fontFamily: "Montserrat-Light",
+    borderBottomColor: "white",
     paddingBottom: 1,
     borderBottomWidth: 1,
-    color: 'white',
-    marginBottom: wp('3%')
+    color: "white",
+    marginBottom: wp("3%")
+  },
+  backButton: {
+    position: "absolute",
+    top: 5,
+    left: 5
   }
 });
 
@@ -157,14 +190,14 @@ const mapStateToProps = state => {
   const { oneDayWeather } = state.oneDayWeatherReducer;
   return {
     oneDayWeatherInfo: oneDayWeather,
-    screenColors: state.setColorReducer.colors.text,
+    screenColors: state.setColorReducer.colors.text
   };
 };
 
 const mapDispatchToProps = {
   searchOneDayWeather,
   searchFiveDaysWeather,
-  getOneDayWeather, 
+  getOneDayWeather,
   getFiveDayWeather,
   setColorAccordingToWeather
 };

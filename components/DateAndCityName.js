@@ -61,8 +61,8 @@ class DateAndCityName extends Component {
 
 const styles = StyleSheet.create({
   date: {
-    fontSize: wp('3,5%'),
-    fontWeight: "400",
+    fontSize: wp('3.8%'),
+    fontFamily:'Montserrat-Light',
     textAlign: 'center'
   },
   mainHeader: {
@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
     marginTop: 20
   },
   cityName: {
-    fontSize: wp('10%'),
+    fontSize: wp('11%'),
     fontFamily: 'MontserratAlternates-Light',
     marginTop: 20,
     textAlign: 'center'

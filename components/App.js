@@ -63,7 +63,7 @@ const AppNavigator = createStackNavigator(
 
   },
   {
-    initialRouteName: "StartScreen",
+    initialRouteName: "Home",
     transitionConfig: TransitionConfiguration
   }
 );

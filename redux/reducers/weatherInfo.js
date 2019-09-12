@@ -64,7 +64,7 @@ const colors = {
     backgroundColor: '#FBC244',
     text: {
       color: '#3C3C3B',
-      fontFamily: 'MontserratAlternates-ExtraLight',
+      fontFamily: 'Montserrat-ExtraLight',
     }
   },
   partOfTheDay: 'day'
