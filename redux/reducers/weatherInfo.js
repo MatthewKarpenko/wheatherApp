@@ -1,10 +1,8 @@
-
-import { combineReducers } from 'redux'
-
+import { combineReducers } from "redux";
 
 //Define initialState
 const weatherStateForOneDay = {
-  oneDayWeather: {},
+  oneDayWeather: null,
   loading: true,
   errorMessage: ""
 };
@@ -18,7 +16,11 @@ const oneDayWeatherReducer = (state = weatherStateForOneDay, action) => {
     case GET_WEATHER_ONE_DAY:
       return { ...state, loading: action.payload };
     case GET_WEATHER_ONE_DAY_FULFILLED:
-      return { ...state, oneDayWeather: action.payload, loading: action.loading };
+      return {
+        ...state,
+        oneDayWeather: action.payload,
+        loading: action.loading
+      };
     case GET_WEATHER_ONE_DAY_REJECTED:
       return {
         ...state,
@@ -29,7 +31,6 @@ const oneDayWeatherReducer = (state = weatherStateForOneDay, action) => {
       return state;
   }
 };
-
 
 const weatherStateForFiveDays = {
   fiveDaysWeather: {},
@@ -46,7 +47,11 @@ const fiveDayWeatherReducer = (state = weatherStateForFiveDays, action) => {
     case GET_WEATHER_FIVE_DAYS:
       return { ...state, loading: action.payload };
     case GET_WEATHER_FIVE_DAYS_FULFILLED:
-      return { ...state, fiveDaysWeather: action.payload, loading: action.loading };
+      return {
+        ...state,
+        fiveDaysWeather: action.payload,
+        loading: action.loading
+      };
     case GET_WEATHER_FIVE_DAYS_REJECTED:
       return {
         ...state,
@@ -58,44 +63,53 @@ const fiveDayWeatherReducer = (state = weatherStateForFiveDays, action) => {
   }
 };
 
-const SET_COLOR_ACCORDING_TO_TIME = 'SET_COLOR_ACCORDING_TO_TIME'
+const SET_COLOR_ACCORDING_TO_TIME = "SET_COLOR_ACCORDING_TO_TIME";
 const colors = {
   colors: {
-    backgroundColor: '#FBC244',
+    backgroundColor: "#FBC244",
     text: {
-      color: '#3C3C3B',
-      fontFamily: 'Montserrat-ExtraLight',
+      color: "#3C3C3B",
+      fontFamily: "Montserrat-ExtraLight"
     }
   },
-  partOfTheDay: 'day'
-}
-const setColorReducer = (state = colors, action) => { 
+  partOfTheDay: "day"
+};
+const setColorReducer = (state = colors, action) => {
   switch (action.type) {
     case SET_COLOR_ACCORDING_TO_TIME:
-      return {...state, colors: action.payload, partOfTheDay: action.partOfTheDay }
-      default:
-        return state;
+      return {
+        ...state,
+        colors: action.payload,
+        partOfTheDay: action.partOfTheDay
+      };
+    default:
+      return state;
   }
-}
+};
 
-const TYPE_OF_ERROR = 'TYPE_OF_ERROR';
+const TYPE_OF_ERROR = "TYPE_OF_ERROR";
+const RESET_ERROR = 'RESET_ERROR';
 const errors = {
   bool: false,
   code: null,
-  text: ''
-}
+  text: ""
+};
 
 const setErrorReducer = (state = errors, action) => {
-
-  switch(action.type) {
+  switch (action.type) {
     case TYPE_OF_ERROR:
-        const { code, text} = action.payload
-      return {...state, code, text, bool: action.bool}
-      default:
-        return state 
+      const { code, text } = action.payload;
+      return { ...state, code, text, bool: action.bool };
+    case RESET_ERROR:
+      return { ...state, code: action.payload.code , text: action.payload.text, bool: action.bool };
+    default:
+      return state;
   }
-}
+};
 
-     
-export default combineReducers({ oneDayWeatherReducer, fiveDayWeatherReducer, setColorReducer, setErrorReducer });
-
+export default combineReducers({
+  oneDayWeatherReducer,
+  fiveDayWeatherReducer,
+  setColorReducer,
+  setErrorReducer
+});

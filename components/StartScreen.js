@@ -4,8 +4,8 @@ import {
   StyleSheet,
   TextInput,
   PermissionsAndroid,
-  View,
-  TouchableOpacity
+  TouchableOpacity,
+  BackHandler 
 } from "react-native";
 import MaterialCommunityIcon from "react-native-vector-icons/MaterialCommunityIcons";
 import EvilIcon from "react-native-vector-icons/EvilIcons";
@@ -86,6 +86,35 @@ class StartScreen extends Component {
     }
   };
 
+  visibilityOfBackButton = () => {
+    if (this.props.oneDayWeatherInfo == null) {
+      return null
+    }else {
+      return(<MaterialIcon
+        name="arrow-back"
+        size={wp("9%")}
+        color={"white"}
+        style={styles.backButton}
+        onPress={() => this.props.navigation.navigate("Home", {})}
+      />)
+    }
+  }
+
+  componentDidMount() {
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+  }
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
+  }
+  handleBackButtonClick = () => {
+    if(this.props.oneDayWeatherInfo == null) {
+      BackHandler.exitApp();
+    }else {
+    this.props.navigation.navigate('Home');
+    }
+    return true;
+  }
+
   render() {
     const showErr = this.state.errorVisibility ? 1 : 0;
     const { screenColors, navigation } = this.props;
@@ -93,22 +122,15 @@ class StartScreen extends Component {
       background,
       textStyle,
       buttonStyles,
-      textInputStyles,
-      backButton
+      textInputStyles
     } = styles;
-
+    console.log(this.props.oneDayWeatherInfo)
     return (
       <GestureRecognizer
         style={background}
         onSwipeDown={() => navigation.goBack()}
       >
-        <MaterialIcon
-          name="arrow-back"
-          size={wp("9%")}
-          color={"white"}
-          style={backButton}
-          onPress={() => navigation.navigate("Home", {})}
-        />
+        {this.visibilityOfBackButton()}
 
         <MaterialCommunityIcon
           name="weather-cloudy"

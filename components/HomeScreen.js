@@ -36,7 +36,7 @@ class HomeScreen extends PureComponent {
           title: "Cool Location Permission",
           message:
             "Cool Location App needs access to your location " +
-            "so you can take awesome forecast.",
+            "so you can see awesome forecast.",
           buttonNeutral: "Ask Me Later",
           buttonNegative: "Cancel",
           buttonPositive: "OK"
@@ -62,6 +62,7 @@ class HomeScreen extends PureComponent {
         console.log("You can use location");
       } else {
         console.log("location permission denied");
+        this.props.navigation.navigate('StartScreen')
       }
     } catch (err) {
       console.warn(err);
@@ -81,8 +82,6 @@ class HomeScreen extends PureComponent {
       velocityThreshold: 0.1,
       directionalOffsetThreshold: 80
     };
-    console.log(screenColors)
-
     if (!loading) {
 
       if(!errorCheck.bool){
