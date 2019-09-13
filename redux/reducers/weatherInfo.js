@@ -33,7 +33,7 @@ const oneDayWeatherReducer = (state = weatherStateForOneDay, action) => {
 };
 
 const weatherStateForFiveDays = {
-  fiveDaysWeather: {},
+  fiveDaysWeather: null,
   loading: true,
   errorMessage: ""
 };

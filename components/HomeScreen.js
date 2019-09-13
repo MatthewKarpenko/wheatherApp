@@ -48,7 +48,6 @@ class HomeScreen extends PureComponent {
             await this.props.getOneDayWeather(position.coords);
             await this.props.getFiveDayWeather(position.coords);
             const { sunrise, sunset } = this.props.oneDayWeatherInfo.sys;
-            this.props.setColorAccordingToWeather(sunrise, sunset);
           },
           error => {
             console.log(error.code, error.message);

@@ -70,10 +70,9 @@ class SunPath extends Component {
   }
 
   render() {
-
+    
     const { screenColors } = this.props;
-    console.log(screenColors)
-  
+
     return (
       <View style={styles.sunPathContainer}>
         <Svg

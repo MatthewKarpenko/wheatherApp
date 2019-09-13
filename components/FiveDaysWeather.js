@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import { StyleSheet, View, Text } from "react-native";
 import { connect } from "react-redux";
 import MaterialCommunityIcon from "react-native-vector-icons/MaterialCommunityIcons";
@@ -8,14 +8,9 @@ import {
   heightPercentageToDP as hp
 } from "react-native-responsive-screen";
 
-class FiveDaysWeather extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      fiveDayForecast: []
-    };
-  }
+import LoadingIcon from "./LoadingIcon";
 
+class FiveDaysWeather extends PureComponent {
   setIcon = id => {
     if (id < 300) {
       return "weather-windy";
@@ -58,77 +53,115 @@ class FiveDaysWeather extends Component {
     });
   };
 
-  componentDidMount() {
-    this.showWeatherForFiveDays();
-  }
-
   render() {
-    const { fiveDayForecast } = this.state;
-    const { screenColors } = this.props;
-    const { oneDayContainer, tempAndIcon, textStyles, headerText, oneDayTemp } = styles;
+    const { screenColors, fiveDaysWeatherInfo } = this.props;
+    const {
+      oneDayContainer,
+      tempAndIcon,
+      textStyles,
+      headerText,
+      oneDayTemp
+    } = styles;
     const combineTextStyles = StyleSheet.flatten([screenColors, textStyles]);
-    return (
-      <View>
+    if (fiveDaysWeatherInfo == null) {
+      console.log("works");
+      return (
+        <View
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            paddingTop: hp("7%")
+          }}
+        >
+          <LoadingIcon size={hp("15%")} />
+        </View>
+      );
+    } else {
+      const forecastHolder = [];
+      const simplifiedForecast = [];
+      fiveDaysWeatherInfo.list.map(el => {
+        if (el.dt_txt.includes("12:00")) {
+          forecastHolder.push(el);
+        }
+      });
 
-        <Text style={[screenColors, headerText]}>Next days:</Text>
+      forecastHolder.forEach(day => {
+        const oneDayInfo = {};
+        const dayName = moment(day.dt_txt).format("dddd");
+        const dayTemp = Math.round(day.main.temp);
+        const dayIcon = day.weather[0].id;
+        oneDayInfo.dayName = dayName;
+        oneDayInfo.temperature = dayTemp;
+        oneDayInfo.forecastIcon = dayIcon;
+        simplifiedForecast.push(oneDayInfo);
+      });
 
-        {fiveDayForecast.map(day => {
-          const { dayName, temperature, forecastIcon } = day;
-          return (
-            <View style={[oneDayContainer,
-            { 
-            borderTopColor: screenColors.color,
-            borderTopWidth: 1
-            }
-            ]} 
-            key={fiveDayForecast.indexOf(day)}>
-              <Text style={combineTextStyles}>{dayName}</Text>
-              <View style={ tempAndIcon }>
-                <MaterialCommunityIcon
-                  name={this.setIcon(forecastIcon)}
-                  size={wp('10%')}
-                  color={screenColors.color}
-                />
-                <Text style={[screenColors, oneDayTemp]}>{temperature}&#176;</Text>
+      return (
+        <View>
+          <Text style={[screenColors, headerText]}>Next days:</Text>
+          {simplifiedForecast.map(day => {
+            const { dayName, temperature, forecastIcon } = day;
+            return (
+              <View
+                style={[
+                  oneDayContainer,
+                  {
+                    borderTopColor: screenColors.color,
+                    borderTopWidth: 1
+                  }
+                ]}
+                key={simplifiedForecast.indexOf(day)}
+              >
+                <Text style={combineTextStyles}>{dayName}</Text>
+                <View style={tempAndIcon}>
+                  <MaterialCommunityIcon
+                    name={this.setIcon(forecastIcon)}
+                    size={wp("10%")}
+                    color={screenColors.color}
+                  />
+                  <Text style={[screenColors, oneDayTemp]}>
+                    {temperature}&#176;
+                  </Text>
+                </View>
               </View>
-              
-            </View>
-          );
-        })}
-      </View>
-    );
+            );
+          })}
+        </View>
+      );
+    }
   }
 }
 
 const styles = StyleSheet.create({
-  oneDayContainer : {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+  oneDayContainer: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     width: wp("82%"),
     paddingTop: 5,
     paddingBottom: 5
   },
   tempAndIcon: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center'
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center"
   },
   textStyles: {
-    fontSize: wp('4,9%'),
-    fontFamily: 'Montserrat-Light'
+    fontSize: wp("4,9%"),
+    fontFamily: "Montserrat-Light"
   },
   headerText: {
-    textAlign: 'center',
+    textAlign: "center",
     fontFamily: "Montserrat-Medium",
-    marginBottom: hp('1%'),
-    marginTop: hp('2,5%'),
-    fontSize: wp('5%')
+    marginBottom: hp("1%"),
+    marginTop: hp("2,5%"),
+    fontSize: wp("5%")
   },
   oneDayTemp: {
-    marginLeft: wp('3%'),
-    fontSize: wp('5,8%')
+    marginLeft: wp("3%"),
+    fontSize: wp("5,8%")
   }
 });
 
