@@ -11,7 +11,7 @@ import GestureRecognizer from "react-native-swipe-gestures";
 import { connect } from "react-redux";
 
 
-import { getOneDayWeather, getFiveDayWeather, setColorAccordingToWeather } from "../redux/store";
+import { getOneDayWeather, getFiveDayWeather } from "../redux/store";
 import DateAndCityName from "./DateAndCityName";
 import OneDayWeather from "./OneDayWeather";
 import SunPath from "./SunPath";
@@ -47,7 +47,6 @@ class HomeScreen extends PureComponent {
           async position => {
             await this.props.getOneDayWeather(position.coords);
             await this.props.getFiveDayWeather(position.coords);
-            const { sunrise, sunset } = this.props.oneDayWeatherInfo.sys;
           },
           error => {
             console.log(error.code, error.message);
@@ -159,8 +158,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = {
   getOneDayWeather,
-  getFiveDayWeather,
-  setColorAccordingToWeather
+  getFiveDayWeather
 };
 
 export default connect(

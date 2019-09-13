@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Text, StyleSheet, View } from "react-native";
+import { Text, StyleSheet, View, BackHandler } from "react-native";
 import { connect } from "react-redux";
 import MaterialCommunityIcon from "react-native-vector-icons/MaterialCommunityIcons";
 import AntDesignIcon from "react-native-vector-icons/AntDesign";
@@ -8,9 +8,33 @@ import {
   widthPercentageToDP as wp
 } from "react-native-responsive-screen";
 
+import { sendError } from '../redux/store'
+
 class ErrorScreen extends Component {
+
+  navigateToSearchScreen = () => {
+    const { navigation, oneDayWeatherInfo } = this.props;
+    navigation.navigate("StartScreen");
+    if (oneDayWeatherInfo != null) {
+      this.props.sendError(0)
+    }else {
+      return
+    }
+  }
+
+  componentDidMount() {
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+  }
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
+  }
+  handleBackButtonClick = () => {
+    this.props.navigation.navigate('StartScreen');
+    return true;
+  }
+
   render() {
-    const { screenColors, errorCheck, navigation } = this.props;
+    const { screenColors, errorCheck } = this.props;
     const { errorText, errorCode } = styles;
     return (
       <View
@@ -30,7 +54,7 @@ class ErrorScreen extends Component {
           name="back"
           size={hp("8%")}
           color={screenColors.color}
-          onPress={() => navigation.navigate("StartScreen")}
+          onPress={() => this.navigateToSearchScreen()}
         />
       </View>
     );
@@ -57,13 +81,19 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
+  const { oneDayWeather } = state.oneDayWeatherReducer;
   return {
     screenColors: state.setColorReducer.colors,
-    errorCheck: state.setErrorReducer
+    errorCheck: state.setErrorReducer,
+    oneDayWeatherInfo: oneDayWeather
   };
+};
+
+const mapDispatchToProps = {
+  sendError
 };
 
 export default connect(
   mapStateToProps,
-  {}
+  mapDispatchToProps
 )(ErrorScreen);
