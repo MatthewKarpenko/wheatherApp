@@ -1,5 +1,6 @@
 import React, { PureComponent } from "react";
 import { StyleSheet, View, Text } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
 import { connect } from "react-redux";
 import MaterialCommunityIcon from "react-native-vector-icons/MaterialCommunityIcons";
 import moment from "moment";
@@ -9,29 +10,20 @@ import {
 } from "react-native-responsive-screen";
 
 import LoadingIcon from "./LoadingIcon";
+import FiveDaysHoursWeather from "./FiveDaysHoursWeather";
+import { setIcon } from "./reusableFunctions";
 
 class FiveDaysWeather extends PureComponent {
-  setIcon = id => {
-    if (id < 300) {
-      return "weather-windy";
-    } else if (id < 500) {
-      return "weather-rainy";
-    } else if (id < 600) {
-      return "weather-pouring";
-    } else if (id < 700) {
-      return "weather-snowy";
-    } else if (id < 800) {
-      return "weather-cloudy";
-    } else if (id == 800) {
-      return "weather-sunny";
-    } else {
-      return "weather-cloudy";
-    }
-  };
+  constructor() {
+    super();
+    this.state = {
+      showWeatherByHours: false,
+      forecastDate: ""
+    };
+  }
 
-  showWeatherForFiveDays = () => {
+  showWeatherForFiveDays = arr => {
     const forecastHolder = [];
-    const simplifiedForecast = [];
     this.props.fiveDaysWeatherInfo.list.map(el => {
       if (el.dt_txt.includes("12:00")) {
         forecastHolder.push(el);
@@ -43,15 +35,21 @@ class FiveDaysWeather extends PureComponent {
       const dayName = moment(day.dt_txt).format("dddd");
       const dayTemp = Math.round(day.main.temp);
       const dayIcon = day.weather[0].id;
+      const dayDate = moment(day.dt_txt).format("YYYY-MM-DD");
       oneDayInfo.dayName = dayName;
       oneDayInfo.temperature = dayTemp;
       oneDayInfo.forecastIcon = dayIcon;
-      simplifiedForecast.push(oneDayInfo);
-    });
-    this.setState({
-      fiveDayForecast: simplifiedForecast
+      oneDayInfo.dayDate = dayDate;
+      arr.push(oneDayInfo);
     });
   };
+
+  handlerForShowingBackWeatherByDays = () => {
+    console.log('lll')
+    this.setState({
+      showWeatherByHours: true
+    })
+  }
 
   render() {
     const { screenColors, fiveDaysWeatherInfo } = this.props;
@@ -60,80 +58,82 @@ class FiveDaysWeather extends PureComponent {
       tempAndIcon,
       textStyles,
       headerText,
-      oneDayTemp
+      oneDayTemp,
+      oneDayTempIcon,
+      allWeatherContainer
     } = styles;
     const combineTextStyles = StyleSheet.flatten([screenColors, textStyles]);
+    const simplifiedForecast = [];
     if (fiveDaysWeatherInfo == null) {
-      console.log("works");
       return (
-        <View
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            paddingTop: hp("7%")
-          }}
-        >
+        <View style={allWeatherContainer}>
           <LoadingIcon size={hp("15%")} />
         </View>
       );
     } else {
-      const forecastHolder = [];
-      const simplifiedForecast = [];
-      fiveDaysWeatherInfo.list.map(el => {
-        if (el.dt_txt.includes("12:00")) {
-          forecastHolder.push(el);
-        }
-      });
+      if (!this.state.showWeatherByHours) {
+        this.showWeatherForFiveDays(simplifiedForecast);
 
-      forecastHolder.forEach(day => {
-        const oneDayInfo = {};
-        const dayName = moment(day.dt_txt).format("dddd");
-        const dayTemp = Math.round(day.main.temp);
-        const dayIcon = day.weather[0].id;
-        oneDayInfo.dayName = dayName;
-        oneDayInfo.temperature = dayTemp;
-        oneDayInfo.forecastIcon = dayIcon;
-        simplifiedForecast.push(oneDayInfo);
-      });
+        return (
+          <View>
+            <Text style={[screenColors, headerText]}>Next days:</Text>
+            {simplifiedForecast.map(day => {
+              const { dayName, temperature, forecastIcon, dayDate } = day;
+              return (
+                <TouchableOpacity
+                  style={[
+                    oneDayContainer,
+                    {
+                      borderTopColor: screenColors.color,
+                      borderTopWidth: 1
+                    }
+                  ]}
+                  key={simplifiedForecast.indexOf(day)}
+                  onPress={() => {
+                    this.setState({
+                      showWeatherByHours: true,
+                      forecastDate: dayDate
+                    });
+                  }}
+                >
+                  <Text style={combineTextStyles}>{dayName}</Text>
+                  <View style={tempAndIcon}>
+                    <MaterialCommunityIcon
+                      style={oneDayTempIcon}
+                      name={setIcon(forecastIcon)}
+                      size={wp("10%")}
+                      color={screenColors.color}
+                    />
 
-      return (
-        <View>
-          <Text style={[screenColors, headerText]}>Next days:</Text>
-          {simplifiedForecast.map(day => {
-            const { dayName, temperature, forecastIcon } = day;
-            return (
-              <View
-                style={[
-                  oneDayContainer,
-                  {
-                    borderTopColor: screenColors.color,
-                    borderTopWidth: 1
-                  }
-                ]}
-                key={simplifiedForecast.indexOf(day)}
-              >
-                <Text style={combineTextStyles}>{dayName}</Text>
-                <View style={tempAndIcon}>
-                  <MaterialCommunityIcon
-                    name={this.setIcon(forecastIcon)}
-                    size={wp("10%")}
-                    color={screenColors.color}
-                  />
-                  <Text style={[screenColors, oneDayTemp]}>
-                    {temperature}&#176;
-                  </Text>
-                </View>
-              </View>
-            );
-          })}
-        </View>
-      );
+                    <Text style={[screenColors, oneDayTemp]}>
+                      {temperature}&#176;
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        );
+      } else {
+        return (
+          <FiveDaysHoursWeather
+            forecastDate={this.state.forecastDate}
+            componentStyles={styles}
+            handler={this.handlerForShowingBackWeatherByDays}
+          />
+        );
+      }
     }
   }
 }
 
 const styles = StyleSheet.create({
+  allWeatherContainer: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingTop: hp("7%")
+  },
   oneDayContainer: {
     display: "flex",
     flexDirection: "row",
@@ -160,8 +160,12 @@ const styles = StyleSheet.create({
     fontSize: wp("5%")
   },
   oneDayTemp: {
-    marginLeft: wp("3%"),
+    width: 35,
+    textAlign: "center",
     fontSize: wp("5,8%")
+  },
+  oneDayTempIcon: {
+    width: 40
   }
 });
 

@@ -8,30 +8,35 @@ import {
   widthPercentageToDP as wp
 } from "react-native-responsive-screen";
 
-import { sendError } from '../redux/store'
+import { sendError } from "../redux/store";
 
 class ErrorScreen extends Component {
-
   navigateToSearchScreen = () => {
     const { navigation, oneDayWeatherInfo } = this.props;
     navigation.navigate("StartScreen");
     if (oneDayWeatherInfo != null) {
-      this.props.sendError(0)
-    }else {
-      return
+      this.props.sendError(0);
+    } else {
+      return;
     }
-  }
+  };
 
   componentDidMount() {
-    BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+    BackHandler.addEventListener(
+      "hardwareBackPress",
+      this.handleBackButtonClick
+    );
   }
   componentWillUnmount() {
-    BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
+    BackHandler.removeEventListener(
+      "hardwareBackPress",
+      this.handleBackButtonClick
+    );
   }
   handleBackButtonClick = () => {
-    this.props.navigation.navigate('StartScreen');
+    this.props.navigation.navigate("StartScreen");
     return true;
-  }
+  };
 
   render() {
     const { screenColors, errorCheck } = this.props;

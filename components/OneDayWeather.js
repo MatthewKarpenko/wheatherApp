@@ -7,7 +7,7 @@ import {
   heightPercentageToDP as hp
 } from "react-native-responsive-screen";
 
-const night = "night";
+import { setIcon } from './reusableFunctions'
 
 class OneDayWeather extends Component {
   constructor(props) {
@@ -20,80 +20,10 @@ class OneDayWeather extends Component {
     };
   }
 
-  setIcon = (id, iconColor = "#3C3C3B") => {
-    if (this.props.partOfTheDay === night) {
-      return (
-        <MaterialCommunityIcon
-          name={"weather-night"}
-          size={110}
-          color={iconColor}
-        />
-      );
-    } else {
-      if (id < 300) {
-        return (
-          <MaterialCommunityIcon
-            name={"weather-windy"}
-            size={110}
-            color={iconColor}
-          />
-        );
-      } else if (id < 500) {
-        return (
-          <MaterialCommunityIcon
-            name={"weather-rainy"}
-            size={110}
-            color={iconColor}
-          />
-        );
-      } else if (id < 600) {
-        return (
-          <MaterialCommunityIcon
-            name={"weather-pouring"}
-            size={110}
-            color={iconColor}
-          />
-        );
-      } else if (id < 700) {
-        return (
-          <MaterialCommunityIcon
-            name={"weather-snowy"}
-            size={110}
-            color={iconColor}
-          />
-        );
-      } else if (id < 800) {
-        return (
-          <MaterialCommunityIcon
-            name={"weather-cloudy"}
-            size={110}
-            color={iconColor}
-          />
-        );
-      } else if (id === 800) {
-        return (
-          <MaterialCommunityIcon
-            name={"weather-sunny"}
-            size={110}
-            color={iconColor}
-          />
-        );
-      } else {
-        return (
-          <MaterialCommunityIcon
-            name={"weather-cloudy"}
-            size={110}
-            color={iconColor}
-          />
-        );
-      }
-    }
-  };
-
   componentDidMount() {
     const { oneDayWeatherInfo } = this.props;
-
     const temperatures = [];
+
     temperatures.unshift(Math.round(oneDayWeatherInfo.main.temp_min));
     temperatures.unshift(Math.round(oneDayWeatherInfo.main.temp_max));
     this.setState({
@@ -115,7 +45,15 @@ class OneDayWeather extends Component {
     } = styles;
     return (
       <View style={{ marginTop: hp("2%") }}>
-        <View style={container}>{this.setIcon(weatherId, screenColors.color)}</View>
+        
+        <View style={container}>
+        <MaterialCommunityIcon
+              name={setIcon(weatherId)}
+              size={110}
+              color={screenColors.color}
+            />
+        </View>
+
         <View style={todayTempContainer}>
           <View style={tempStyles}>
             <MaterialCommunityIcon
@@ -127,20 +65,24 @@ class OneDayWeather extends Component {
               {this.state.maxMinTemp[1]}&#176;
             </Text>
           </View>
+
         <View>
           <Text style={[screenColors, currentTemp]}>
             {this.state.todayTemp}&#176;
           </Text>
         </View>
+
           <View style={tempStyles}>
             <MaterialCommunityIcon
               name={"arrow-up"}
               size={10}
               color={screenColors.color}
             />
+
             <Text style={[screenColors, partTempStyles]}>
               {this.state.maxMinTemp[0]}&#176;
             </Text>
+
           </View>
         </View>
 
