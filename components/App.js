@@ -7,7 +7,6 @@ import HomeScreen from "./HomeScreen";
 import DetailsScreen from "./DetailsScreen";
 import store from "../redux/store";
 import StartScreen from './StartScreen';
-import ErrorScreen from './ErrorScreen';
 
 let SlideFromBottom = (index, position, height) => {
   const translateY = position.interpolate({

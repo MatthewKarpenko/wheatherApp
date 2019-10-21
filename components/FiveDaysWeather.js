@@ -1,8 +1,14 @@
 import React, { PureComponent } from "react";
-import { StyleSheet, View, Text } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import {
+  StyleSheet,
+  View,
+  Text,
+  Animated,
+  TouchableOpacity
+} from "react-native";
 import { connect } from "react-redux";
 import MaterialCommunityIcon from "react-native-vector-icons/MaterialCommunityIcons";
+
 import moment from "moment";
 import {
   widthPercentageToDP as wp,
@@ -18,9 +24,21 @@ class FiveDaysWeather extends PureComponent {
     super();
     this.state = {
       showWeatherByHours: false,
-      forecastDate: ""
+      forecastDate: "",
+      oneDayElementWidth: wp("82%"),
+      paddingValue: new Animated.Value(wp('100%')),
+      animationVelocity: 100,
+      animateComponent: false
     };
   }
+
+  animateDays = () => {
+
+    Animated.timing(this.state.paddingValue, {
+      toValue: 0,
+      duration: this.state.animationVelocity
+          }).start();
+  };
 
   showWeatherForFiveDays = arr => {
     const forecastHolder = [];
@@ -45,10 +63,13 @@ class FiveDaysWeather extends PureComponent {
   };
 
   handlerForShowingBackWeatherByDays = () => {
-    console.log('lll')
     this.setState({
-      showWeatherByHours: true
-    })
+      showWeatherByHours: false
+    });
+  };
+
+  componentDidMount() {
+   
   }
 
   render() {
@@ -60,10 +81,18 @@ class FiveDaysWeather extends PureComponent {
       headerText,
       oneDayTemp,
       oneDayTempIcon,
-      allWeatherContainer
+      allWeatherContainer,
+      daysHolder,
+      animationHolder
     } = styles;
+    
+    const {paddingValue, animateComponent} = this.state
     const combineTextStyles = StyleSheet.flatten([screenColors, textStyles]);
     const simplifiedForecast = [];
+  
+ 
+    
+
     if (fiveDaysWeatherInfo == null) {
       return (
         <View style={allWeatherContainer}>
@@ -73,45 +102,53 @@ class FiveDaysWeather extends PureComponent {
     } else {
       if (!this.state.showWeatherByHours) {
         this.showWeatherForFiveDays(simplifiedForecast);
-
+        this.animateDays()
         return (
-          <View>
+          <View style={{daysHolder}}>
             <Text style={[screenColors, headerText]}>Next days:</Text>
-            {simplifiedForecast.map(day => {
-              const { dayName, temperature, forecastIcon, dayDate } = day;
-              return (
-                <TouchableOpacity
-                  style={[
-                    oneDayContainer,
-                    {
-                      borderTopColor: screenColors.color,
-                      borderTopWidth: 1
-                    }
-                  ]}
-                  key={simplifiedForecast.indexOf(day)}
-                  onPress={() => {
-                    this.setState({
-                      showWeatherByHours: true,
-                      forecastDate: dayDate
-                    });
-                  }}
-                >
-                  <Text style={combineTextStyles}>{dayName}</Text>
-                  <View style={tempAndIcon}>
-                    <MaterialCommunityIcon
-                      style={oneDayTempIcon}
-                      name={setIcon(forecastIcon)}
-                      size={wp("10%")}
-                      color={screenColors.color}
-                    />
+            <Animated.View
+              style={[animationHolder,  {paddingRight:paddingValue} ]}
+            >
+              {simplifiedForecast.map(day => {
+                const { dayName, temperature, forecastIcon, dayDate } = day;
+                return (
+                  <TouchableOpacity
+                    style={[
+                      oneDayContainer,
+                      {
+                        borderTopColor: screenColors.color,
+                        borderTopWidth: 1
+                      }
+                    ]}
+                    key={simplifiedForecast.indexOf(day)}
+                    dayDate={dayDate}
+                    onPress=
+                    {() => {
+                      this.setState({
+                        showWeatherByHours: true,
+                        forecastDate: dayDate,
+                        paddingValue: new Animated.Value(wp('200%')),
+                        animationVelocity: 600
+                      });
+                    }}
+                    >
+                    <Text style={combineTextStyles}>{dayName}</Text>
+                    <View style={tempAndIcon}>
+                      <MaterialCommunityIcon
+                        style={oneDayTempIcon}
+                        name={setIcon(forecastIcon)}
+                        size={wp("10%")}
+                        color={screenColors.color}
+                      />
 
-                    <Text style={[screenColors, oneDayTemp]}>
-                      {temperature}&#176;
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-              );
-            })}
+                      <Text style={[screenColors, oneDayTemp]}>
+                        {temperature}&#176;
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                );
+              })}
+            </Animated.View>
           </View>
         );
       } else {
@@ -128,6 +165,17 @@ class FiveDaysWeather extends PureComponent {
 }
 
 const styles = StyleSheet.create({
+  daysHolder: {
+    width: wp('100%'),
+    display: "flex",
+    justifyContent: "flex-start",
+    alignItems: "center",
+    overflow: 'hidden'
+  },
+  animationHolder: {
+    width: wp("82%"),
+    overflow: "hidden",
+  },
   allWeatherContainer: {
     display: "flex",
     justifyContent: "center",
@@ -139,6 +187,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    overflow: "hidden",
     width: wp("82%"),
     paddingTop: 5,
     paddingBottom: 5

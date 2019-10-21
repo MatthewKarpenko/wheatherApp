@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Text, View, ScrollView, StyleSheet } from "react-native";
+import { Text, View, StyleSheet, Animated, PanResponder } from "react-native";
 import { connect } from "react-redux";
 import moment from "moment";
 import {
@@ -7,14 +7,21 @@ import {
   heightPercentageToDP as hp
 } from "react-native-responsive-screen";
 import MaterialCommunityIcon from "react-native-vector-icons/MaterialCommunityIcons";
+import GestureRecognizer from "react-native-swipe-gestures";
 
 import { setIcon } from "./reusableFunctions";
+
+const config = {
+  velocityThreshold: 0.3,
+  directionalOffsetThreshold: 80
+};
 
 export class FiveDaysHoursWeather extends Component {
   constructor() {
     super();
     this.state = {
-      weatherByHoursArray: []
+      weatherByHoursArray: [],
+      paddingValue: new Animated.Value(wp('100%'))
     };
   }
 
@@ -35,9 +42,28 @@ export class FiveDaysHoursWeather extends Component {
     });
   };
 
+  animateHours = () => {
+    Animated.timing(this.state.paddingValue,{
+      toValue: 0,
+      duration: 400
+    }).start()
+  }
+
+  panResponder = PanResponder.create({
+    onMoveShouldSetPanResponder: (evt, gestureState) => {
+      if(gestureState.dx > 9) return true
+    },
+
+    onPanResponderTerminate: (evt, gestureState) => {
+      this.props.handler()
+    },
+  });
+
   componentDidMount() {
     this.showForecastByHours(this.props.forecastDate);
+    this.animateHours()
   }
+
 
   render() {
     const { screenColors, forecastDate } = this.props;
@@ -52,63 +78,63 @@ export class FiveDaysHoursWeather extends Component {
     const dayName = moment(forecastDate).format("dddd");
 
     return (
-      <View style={styles.hoursHolder}>
-        <View >
-                <MaterialCommunityIcon
-                    style={styles.showDaysButton}
-                    name={'calendar-month-outline'}
-                    size={wp("8%")}
-                    color={screenColors.color}
-                    onPress={() => this.props.handler()}
-                  />
+      <View
+        {...this.panResponder.panHandlers}
+        style={styles.hoursHolder}
+      >
         <Text
           style={[
             screenColors,
             headerText,
             {
+              width: wp("82%"),
+              textAlign: "center",
               borderBottomColor: screenColors.color,
               borderBottomWidth: 1,
-              width: wp("82%"),
               paddingBottom: 5
             }
           ]}
         >
           {dayName}:
         </Text>
-        </View>
-        <ScrollView scrollEnabled={true} showsVerticalScrollIndicator={false}>
-          {this.state.weatherByHoursArray.map(h => {
-            let blockStyles = [
-              oneDayContainer,
-              {
-                borderTopColor: screenColors.color,
-                borderTopWidth: 1,
+
+        <Animated.ScrollView scrollEnabled={true} style={{
+          width: wp('82%'),
+          overflow: 'hidden',
+          paddingLeft: this.state.paddingValue
+        }} showsVerticalScrollIndicator={false}>
+            {this.state.weatherByHoursArray.map(h => {
+              let blockStyles = [
+                oneDayContainer,
+                {
+                  borderTopColor: screenColors.color,
+                  borderTopWidth: 1
+                }
+              ];
+              if (this.state.weatherByHoursArray.indexOf(h) === 0) {
+                blockStyles = oneDayContainer;
               }
-            ];
-            if (this.state.weatherByHoursArray.indexOf(h) === 0) {
-              blockStyles = oneDayContainer;
-            }
-            return (
-              <View
-                style={blockStyles}
-                key={this.state.weatherByHoursArray.indexOf(h)}
-              >
-                <Text style={[textStyles, screenColors]}>{h.hourName}</Text>
-                <View style={tempAndIcon}>
-                  <MaterialCommunityIcon
-                    style={oneDayTempIcon}
-                    name={setIcon(h.hourIcon)}
-                    size={wp("10%")}
-                    color={screenColors.color}
-                  />
-                  <Text style={[screenColors, oneDayTemp]}>
-                    {h.hourTemp}&#176;
-                  </Text>
+              return (
+                <View
+                  style={blockStyles}
+                  key={this.state.weatherByHoursArray.indexOf(h)}
+                >
+                  <Text style={[textStyles, screenColors]}>{h.hourName}</Text>
+                  <View style={tempAndIcon}>
+                    <MaterialCommunityIcon
+                      style={oneDayTempIcon}
+                      name={setIcon(h.hourIcon)}
+                      size={wp("10%")}
+                      color={screenColors.color}
+                    />
+                    <Text style={[screenColors, oneDayTemp]}>
+                      {h.hourTemp}&#176;
+                    </Text>
+                  </View>
                 </View>
-              </View>
-            );
-          })}
-        </ScrollView>
+              );
+            })}
+        </Animated.ScrollView>
       </View>
     );
   }
@@ -131,12 +157,8 @@ const styles = StyleSheet.create({
     height: hp("44%"),
     width: wp("100%"),
     display: "flex",
-    justifyContent: "center",
-    alignItems: "center"
-  },
-  showDaysButton: {
-    position: 'absolute',
-    left: 0,
-    top: 7
+    justifyContent: "flex-start",
+    alignItems: "center",
+    overflow: 'hidden'
   }
 });
